@@ -1,0 +1,4 @@
+/* Tabs */
+.tabs{display:flex;gap:8px;background:#fff;border:1px solid #eee;border-radius:10px;padding:4px}
+.tab{background:transparent;border:none;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600}
+.tab.active{background:var(--accent);color:#fff}

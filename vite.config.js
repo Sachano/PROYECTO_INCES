@@ -16,5 +16,13 @@ export default defineConfig({
     esbuildOptions: {
       loader: { ".js": "jsx" }
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
   }
 })

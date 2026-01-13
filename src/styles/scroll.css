@@ -1,0 +1,4 @@
+/* Horizontal scroll */
+.h-scroll{display:flex;gap:12px;overflow:auto;padding-bottom:6px;padding-left:2px}
+.h-scroll::-webkit-scrollbar{height:8px}
+.h-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:8px}

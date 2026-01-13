@@ -1,0 +1,16 @@
+{
+  "id": 100,
+  "name": "Juan Perez",
+  "username": "juanp",
+  "email": "juan@example.com",
+  "bio": "Aprendiz constante. Me gustan los cursos prácticos.",
+  "avatarUrl": "",
+  "followers": 128,
+  "following": 56,
+  "enrolled": [
+    1,
+    6,
+    10
+  ],
+  "updatedAt": "2026-01-12T21:09:21.471Z"
+}

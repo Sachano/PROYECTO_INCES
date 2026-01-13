@@ -1,0 +1,73 @@
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;--bs-backdrop-bg:#fff;--bs-backdrop-opacity:0.55;background:rgba(255,255,255,0.55) !important;background-color:rgba(255,255,255,0.55) !important;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal-card{background:#fff;border-radius:14px;max-width:780px;width:100%;box-shadow:0 20px 60px rgba(16,24,40,0.18);max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.modal-card.edge-to-edge{overflow:hidden}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #eee}
+.modal-title{margin:0}
+.modal-body{padding:14px;overflow:auto;flex:1;min-height:0;scrollbar-width:none;-ms-overflow-style:none}
+.modal-body.edge-to-edge{padding:0}
+.modal-body::-webkit-scrollbar{width:0;height:0}
+.modal-body::-webkit-scrollbar-thumb{background:transparent}
+.modal-footer{padding:12px 14px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px;flex:0 0 auto}
+.course-modal{display:flex;gap:14px;align-items:flex-start}
+.course-modal-img{width:120px;height:120px;border-radius:10px;object-fit:cover}
+
+/* Course detail modal */
+.course-detail-modal{display:flex;flex-direction:column}
+.course-detail-hero{position:relative;background:#f2f2f2}
+.course-detail-img{width:100%;height:220px;object-fit:cover;display:block}
+.course-detail-close{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.92);border:1px solid rgba(16,24,40,0.12);backdrop-filter: blur(8px);box-shadow:0 10px 26px rgba(16,24,40,0.14)}
+.course-detail-close:hover{background:#fff;color:var(--accent)}
+.course-detail-content{padding:14px;display:grid;gap:14px}
+.course-detail-toplabel{position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}
+.course-detail-topbadge{display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:950;letter-spacing:0.02em;text-transform:uppercase;padding:8px 12px;border-radius:999px;background:rgba(193,18,31,0.95);color:#fff;border:1px solid rgba(255,255,255,0.25);box-shadow:0 16px 32px rgba(16,24,40,0.18)}
+.course-detail-badge{position:absolute;left:12px;top:12px;font-size:12px;font-weight:900;padding:7px 12px;border-radius:999px;backdrop-filter: blur(10px)}
+.course-detail-badge.virtual{color:#fff;background:linear-gradient(90deg,var(--accent),var(--accent-600))}
+.course-detail-badge.presencial{color:#fff;background:#111}
+
+/* mover badge de tipo un poco hacia abajo para no chocar con el topbadge */
+.course-detail-badge{top:52px}
+
+.course-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.course-detail-title{margin:0;font-weight:1000;letter-spacing:-0.035em;line-height:1.1;font-size:26px;color:#0b1220}
+.course-detail-meta{display:flex;gap:8px;flex-wrap:wrap}
+.meta-chip{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:900;color:var(--dark);background:rgba(16,24,40,0.04);border:1px solid rgba(16,24,40,0.08);padding:9px 12px;border-radius:999px;white-space:nowrap}
+.meta-chip svg{width:18px;height:18px}
+
+.course-detail-section{display:grid;gap:10px}
+.section-h{margin:0;font-size:14px;font-weight:900;color:var(--dark)}
+.course-detail-section--instructor .section-h{text-align:center;font-size:20px;letter-spacing:-0.02em}
+.course-detail-description{margin:0;color:var(--muted);line-height:1.6;font-size:14px;padding:2px 2px 0}
+
+.instructor-card{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;background:rgba(16,24,40,0.03);border:1px solid rgba(16,24,40,0.06);padding:14px;border-radius:14px}
+.instructor-avatar{width:54px;height:54px;border-radius:16px;background:#fff;border:1px solid rgba(16,24,40,0.06);display:flex;align-items:center;justify-content:center;color:var(--accent);box-shadow:0 10px 22px rgba(16,24,40,0.08);flex:0 0 auto}
+.instructor-avatar svg{width:26px;height:26px}
+.instructor-name{font-weight:1000;color:var(--dark);font-size:16px}
+.instructor-meta{margin-top:6px;display:grid;gap:8px;color:var(--muted);font-size:14px}
+.meta-line{display:inline-flex;align-items:center;gap:8px}
+.meta-line svg{width:18px;height:18px}
+
+.requirements-card{background:#fff;border:1px solid rgba(16,24,40,0.10);border-radius:14px;overflow:hidden}
+.requirements-head{padding:12px;background:linear-gradient(180deg,rgba(193,18,31,0.06),rgba(16,24,40,0.00))}
+.requirements-title{font-weight:950;color:var(--dark)}
+.requirements-sub{margin-top:4px;color:var(--muted);font-size:13px}
+.requirements-list{padding:12px;display:grid;gap:10px}
+.requirements-item{display:flex;gap:10px;align-items:flex-start}
+.requirements-item svg{color:var(--accent);width:18px;height:18px;flex:0 0 auto;margin-top:2px}
+.req-label{font-weight:900;color:var(--dark)}
+.req-note{color:var(--muted);font-size:13px;margin-top:2px}
+
+.course-detail-footer{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;width:100%}
+
+/* Botón cerrar (icon-btn) con hover más visible en modal */
+.modal-header .icon-btn{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;transition:background .12s ease,color .12s ease, transform .12s ease}
+.modal-header .icon-btn:hover{background:rgba(193,18,31,0.08);color:var(--accent);transform:translateY(-1px)}
+
+/* CTA descargar más intuitiva */
+.course-detail-footer .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-600));border-color:transparent}
+.course-detail-footer .btn.primary:disabled{background:rgba(16,24,40,0.10);border-color:transparent;color:rgba(16,24,40,0.55)}
+
+@media (max-width:520px){
+	.course-detail-img{height:190px}
+	.course-detail-footer .btn{width:100%;justify-content:center}
+}

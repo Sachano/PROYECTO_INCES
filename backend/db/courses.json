@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "title": "Soldadura Básica",
+    "author": "Luis Martínez",
+    "hours": 40,
+    "img": "/assets/course1.svg",
+    "tag": "Virtual",
+    "description": "Fundamentos de soldadura, seguridad y prácticas guiadas.",
+    "longDescription": "Aprende desde cero los principios esenciales de la soldadura: tipos de unión, preparación de materiales, seguridad industrial y práctica guiada. Este curso está diseñado para que avances paso a paso y construyas habilidades aplicables al trabajo real.",
+    "instructor": {
+      "firstName": "Luis",
+      "lastName": "Martínez",
+      "email": "luis.martinez@inces.gob.ve",
+      "phone": "+58 412-0000001",
+      "specialty": "Soldadura TIG/MIG y seguridad industrial"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 2,
+    "title": "Programación Web",
+    "author": "Ana López",
+    "hours": 40,
+    "img": "/assets/course2.svg",
+    "tag": "Virtual",
+    "description": "HTML, CSS, JavaScript y proyecto final web responsive.",
+    "longDescription": "Construye páginas web modernas desde cero: estructura con HTML, estilos con CSS, interacción con JavaScript y un proyecto final responsive. Ideal si quieres iniciar en el desarrollo web y armar un portafolio real.",
+    "instructor": {
+      "firstName": "Ana",
+      "lastName": "López",
+      "email": "ana.lopez@inces.gob.ve",
+      "phone": "+58 412-0000002",
+      "specialty": "Frontend, accesibilidad y diseño responsive"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 3,
+    "title": "Carpintería",
+    "author": "Carlos R.",
+    "hours": 60,
+    "img": "/assets/course1.svg",
+    "tag": "Presencial",
+    "description": "Técnicas de carpintería, herramientas y acabado de muebles.",
+    "longDescription": "Domina el uso seguro de herramientas, lectura de medidas, ensambles básicos y acabados. Trabajarás con ejercicios prácticos para crear piezas reales y mejorar tu precisión y técnica.",
+    "instructor": {
+      "firstName": "Carlos",
+      "lastName": "Rodríguez",
+      "email": "carlos.rodriguez@inces.gob.ve",
+      "phone": "+58 412-0000003",
+      "specialty": "Carpintería, ensambles y acabados"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 4,
+    "title": "Electricidad residencial",
+    "author": "María P.",
+    "hours": 48,
+    "img": "/assets/course2.svg",
+    "tag": "Presencial",
+    "description": "Instalaciones, normas y seguridad eléctrica en el hogar.",
+    "longDescription": "Aprende a instalar y diagnosticar circuitos residenciales con criterio técnico y seguridad. Verás normas, protecciones, conexiones y prácticas orientadas a casos comunes del hogar.",
+    "instructor": {
+      "firstName": "María",
+      "lastName": "Paredes",
+      "email": "maria.paredes@inces.gob.ve",
+      "phone": "+58 412-0000004",
+      "specialty": "Electricidad residencial y normas de seguridad"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 5,
+    "title": "Introducción a UX",
+    "author": "Andrea G.",
+    "hours": 24,
+    "img": "/assets/course1.svg",
+    "tag": "Virtual",
+    "description": "Principios de UX, investigación y prototipado básico.",
+    "longDescription": "Entiende cómo diseñar experiencias centradas en usuarios: investigación, definición de problemas, prototipado y pruebas. Saldrás con un mini-caso documentado que podrás mostrar.",
+    "instructor": {
+      "firstName": "Andrea",
+      "lastName": "Gómez",
+      "email": "andrea.gomez@inces.gob.ve",
+      "phone": "+58 412-0000005",
+      "specialty": "UX Research y prototipado"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 6,
+    "title": "Python básico",
+    "author": "J. Torres",
+    "hours": 30,
+    "img": "/assets/course2.svg",
+    "tag": "Virtual",
+    "description": "Sintaxis de Python, estructuras de datos y scripts prácticos.",
+    "longDescription": "Comienza con Python desde lo esencial: variables, estructuras de control, listas y diccionarios. Practica con ejercicios guiados y scripts útiles orientados a problemas reales.",
+    "instructor": {
+      "firstName": "Javier",
+      "lastName": "Torres",
+      "email": "javier.torres@inces.gob.ve",
+      "phone": "+58 412-0000006",
+      "specialty": "Python y automatización"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 7,
+    "title": "Gestión de proyectos",
+    "author": "S. Castro",
+    "hours": 20,
+    "img": "/assets/course1.svg",
+    "tag": "Virtual",
+    "description": "Planificación, cronogramas, riesgos y seguimiento.",
+    "longDescription": "Aprende a organizar proyectos con claridad: alcance, cronogramas, riesgos y seguimiento. Ideal para coordinar equipos y mejorar resultados con herramientas prácticas.",
+    "instructor": {
+      "firstName": "Sofía",
+      "lastName": "Castro",
+      "email": "sofia.castro@inces.gob.ve",
+      "phone": "+58 412-0000007",
+      "specialty": "Gestión de proyectos y planificación"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 8,
+    "title": "Soldadura avanzada",
+    "author": "Luis Martínez",
+    "hours": 80,
+    "img": "/assets/course2.svg",
+    "tag": "Presencial",
+    "description": "Técnicas avanzadas TIG y MIG con proyectos reales.",
+    "longDescription": "Profundiza en técnicas TIG/MIG avanzadas, control del cordón, selección de material y resolución de defectos. Incluye proyectos prácticos para elevar tu nivel profesional.",
+    "instructor": {
+      "firstName": "Luis",
+      "lastName": "Martínez",
+      "email": "luis.martinez@inces.gob.ve",
+      "phone": "+58 412-0000001",
+      "specialty": "Soldadura avanzada TIG/MIG"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 9,
+    "title": "Mecánica ligera",
+    "author": "R. Díaz",
+    "hours": 50,
+    "img": "/assets/course1.svg",
+    "tag": "Presencial",
+    "description": "Mantenimiento preventivo y correctivo de vehículos.",
+    "longDescription": "Diagnostica y realiza mantenimiento básico con criterios de seguridad: revisión, ajustes, prevención de fallas y buenas prácticas. Perfecto para iniciar en mecánica automotriz.",
+    "instructor": {
+      "firstName": "Ricardo",
+      "lastName": "Díaz",
+      "email": "ricardo.diaz@inces.gob.ve",
+      "phone": "+58 412-0000009",
+      "specialty": "Mecánica automotriz y diagnóstico"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 10,
+    "title": "Marketing digital",
+    "author": "C. Vega",
+    "hours": 18,
+    "img": "/assets/course2.svg",
+    "tag": "Virtual",
+    "description": "Social media, SEO/SEM y analítica básica.",
+    "longDescription": "Conoce las bases para posicionar y medir: redes sociales, SEO/SEM y analítica. Aprende a estructurar campañas simples con indicadores claros.",
+    "instructor": {
+      "firstName": "Carla",
+      "lastName": "Vega",
+      "email": "carla.vega@inces.gob.ve",
+      "phone": "+58 412-0000010",
+      "specialty": "Marketing digital y analítica"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 11,
+    "title": "Habilidades blandas",
+    "author": "P. Ruiz",
+    "hours": 12,
+    "img": "/assets/course1.svg",
+    "tag": "Virtual",
+    "description": "Comunicación, trabajo en equipo y liderazgo.",
+    "longDescription": "Fortalece tus habilidades para el trabajo: comunicación, colaboración, liderazgo y manejo de conflictos. Actividades prácticas y ejemplos aplicados.",
+    "instructor": {
+      "firstName": "Paola",
+      "lastName": "Ruiz",
+      "email": "paola.ruiz@inces.gob.ve",
+      "phone": "+58 412-0000011",
+      "specialty": "Comunicación y liderazgo"
+    },
+    "syllabusUrl": ""
+  },
+  {
+    "id": 12,
+    "title": "Reparación de electrodomésticos",
+    "author": "M. Gómez",
+    "hours": 36,
+    "img": "/assets/course2.svg",
+    "tag": "Presencial",
+    "description": "Diagnóstico y reparación de equipos comunes.",
+    "longDescription": "Aprende a diagnosticar fallas frecuentes y aplicar procedimientos de reparación con seguridad. Verás herramientas, mediciones y casos reales de electrodomésticos comunes.",
+    "instructor": {
+      "firstName": "Manuel",
+      "lastName": "Gómez",
+      "email": "manuel.gomez@inces.gob.ve",
+      "phone": "+58 412-0000012",
+      "specialty": "Diagnóstico y reparación"
+    },
+    "syllabusUrl": ""
+  }
+]

@@ -1,0 +1,5 @@
+/* Form inputs */
+.search-wrap{position:relative;flex:1;min-width:240px}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.search{width:100%;padding:10px 12px 10px 36px;border-radius:12px;border:1px solid #e6e6e6;background:#fff;outline:none;transition:border-color .12s ease, box-shadow .12s ease}
+.search:focus{border-color:rgba(193,18,31,0.35);box-shadow:0 0 0 4px rgba(193,18,31,0.10)}

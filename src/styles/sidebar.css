@@ -1,0 +1,14 @@
+/* App shell + Sidebar */
+.app-shell{display:flex;min-height:100vh}
+.app-main{flex:1;min-width:0;background:var(--bg)}
+.sidebar{width:240px;background:#fff;border-right:1px solid #eee;position:sticky;top:0;height:100vh;padding:16px;display:flex;flex-direction:column;gap:16px}
+.brand{text-transform:uppercase;font-weight:900;letter-spacing:.08em}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#333;text-decoration:none}
+.nav-item:hover{background:rgba(0,0,0,0.04)}
+.nav-item.active{background:rgba(193,18,31,0.10);color:var(--accent);font-weight:800}
+.nav-ico{width:20px;display:inline-flex;justify-content:center}
+
+@media (max-width: 860px){
+  .sidebar{width:200px}
+}

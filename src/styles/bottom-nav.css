@@ -1,0 +1,6 @@
+/* Bottom navigation */
+.bottom-nav{position:fixed;left:12px;right:12px;bottom:14px;height:64px;background:rgba(255,255,255,0.98);display:flex;justify-content:space-around;align-items:center;border-radius:14px;box-shadow:0 18px 48px rgba(16,24,40,0.08)}
+.bn-item{background:none;border:none;display:flex;flex-direction:column;align-items:center;font-size:12px;color:var(--muted);padding:8px 10px;border-radius:10px}
+.bn-item:hover{background:rgba(0,0,0,0.03)}
+.bn-item.active{color:var(--accent);font-weight:800;box-shadow:0 12px 30px rgba(193,18,31,0.12);transform:translateY(-4px)}
+.bn-item span{font-size:11px;margin-top:4px}
