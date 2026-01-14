@@ -6,6 +6,19 @@ export function useCourses(){
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  async function reload(){
+    setLoading(true)
+    try{
+      const items = await api.courses.list()
+      setCourses(items)
+      setError(null)
+    }catch(err){
+      setError(err)
+    }finally{
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     let alive = true
     setLoading(true)
@@ -17,5 +30,5 @@ export function useCourses(){
     return () => { alive = false }
   }, [])
 
-  return { courses, loading, error }
+  return { courses, loading, error, reload }
 }

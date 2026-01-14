@@ -3,11 +3,12 @@ import { IoInformationCircleOutline, IoAddCircleOutline, IoTimeOutline, IoPerson
 
 export default function CourseCardGrid({ course, onDetails, onEnroll }){
   const badgeClass = course.tag === 'Virtual' ? 'grid-badge virtual' : 'grid-badge presencial'
+  const img = course.coverImg || course.img || '/assets/home.png'
 
   return (
     <article className="grid-card">
       <div className="grid-media">
-        <img className="grid-thumb" src={'/assets/home.png'} alt="Portada del curso" loading="lazy" />
+        <img className="grid-thumb" src={img} alt="Portada del curso" loading="lazy" />
         <div className={badgeClass}>{course.tag}</div>
       </div>
       <div className="grid-body">

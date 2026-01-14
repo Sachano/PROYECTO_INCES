@@ -1,0 +1,38 @@
+/* Auth / Login */
+.auth-shell{min-height:100vh;display:grid;place-items:center;padding:18px;background:
+  radial-gradient(1200px 600px at 15% 15%, rgba(193,18,31,0.18), transparent 60%),
+  radial-gradient(900px 500px at 85% 25%, rgba(17,17,17,0.10), transparent 55%),
+  linear-gradient(180deg, #ffffff, var(--bg));
+}
+
+.auth-card{width:min(920px, 100%);display:grid;grid-template-columns:1.05fr 0.95fr;gap:14px;align-items:stretch}
+.auth-panel{background:#fff;border:1px solid rgba(16,24,40,0.08);border-radius:18px;box-shadow:0 18px 60px rgba(16,24,40,0.08);overflow:hidden}
+
+.auth-hero{padding:18px;background:
+  linear-gradient(135deg, rgba(193,18,31,0.10), rgba(193,18,31,0.02));
+border-bottom:1px solid rgba(16,24,40,0.06)}
+.auth-hero h1{margin:0;font-weight:1000;letter-spacing:-0.02em}
+.auth-hero p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.4}
+
+.auth-body{padding:18px}
+.auth-title{margin:0;font-size:18px;font-weight:1000}
+.auth-sub{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+.field{display:grid;gap:6px}
+.field-label{font-weight:900}
+.field-control{position:relative}
+.field-control .input{padding-left:42px}
+.field-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(16,24,40,0.55);display:inline-flex;font-size:18px}
+
+.pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%)}
+.pass-toggle .icon-btn{width:36px;height:36px}
+
+.auth-actions{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:6px}
+.auth-hint{color:var(--muted);font-size:12px;line-height:1.45}
+
+.auth-samples{margin-top:12px;padding:12px;border:1px dashed rgba(16,24,40,0.18);border-radius:14px;background:rgba(16,24,40,0.02);font-size:12px;color:var(--muted)}
+.auth-samples b{color:var(--dark)}
+
+@media (max-width: 860px){
+  .auth-card{grid-template-columns:1fr}
+}

@@ -1,0 +1,28 @@
+/* Users (Master) management */
+.users-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 14px}
+.users-toolbar .spacer{flex:1}
+
+.users-table-wrap{overflow-x:auto}
+.users-table{width:100%;border-collapse:collapse;min-width:860px}
+.users-table th{background:rgba(16,24,40,0.03);text-align:left;padding:12px;color:var(--muted);font-size:12px;letter-spacing:0.02em;text-transform:uppercase}
+.users-table td{padding:12px;vertical-align:middle}
+.users-table tr{border-top:1px solid rgba(16,24,40,0.06)}
+.users-table tr:hover{background:rgba(16,24,40,0.015)}
+.users-table .actions{display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+.user-name{font-weight:900}
+
+.status-pill{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(16,24,40,0.10);background:#fff;white-space:nowrap}
+.status-pill::before{content:'';width:8px;height:8px;border-radius:999px;background:rgba(16,24,40,0.30)}
+.status-pill.active{border-color:rgba(18,183,106,0.30);background:rgba(18,183,106,0.08);color:#067647}
+.status-pill.active::before{background:#12B76A}
+.status-pill.disabled{border-color:rgba(244,63,94,0.30);background:rgba(244,63,94,0.08);color:#9F1239}
+.status-pill.disabled::before{background:#F43F5E}
+
+.row-disabled{opacity:0.72}
+
+.users-hint{color:var(--muted);font-size:12px}
+
+@media (max-width:520px){
+  .users-table{min-width:760px}
+}

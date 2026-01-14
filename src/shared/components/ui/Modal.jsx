@@ -1,4 +1,5 @@
 import React from 'react'
+import { IoCloseOutline } from 'react-icons/io5'
 
 export default function Modal({ open, onClose, title, children, footer, hideHeader = false, cardClassName = '', bodyClassName = '' }){
   if(!open) return null
@@ -8,7 +9,9 @@ export default function Modal({ open, onClose, title, children, footer, hideHead
         {!hideHeader && (
           <div className="modal-header">
             {title ? <h3 className="modal-title">{title}</h3> : <div />}
-            <button className="icon-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+            <button className="icon-btn" onClick={onClose} aria-label="Cerrar" type="button">
+              <IoCloseOutline />
+            </button>
           </div>
         )}
         <div className={`modal-body ${bodyClassName}`.trim()}>{children}</div>

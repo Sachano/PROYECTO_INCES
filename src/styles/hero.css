@@ -1,6 +1,6 @@
 /* Hero */
 .hero{height:240px;position:relative;background:linear-gradient(180deg, rgba(193,18,31,0.95), rgba(193,18,31,0.85));display:flex;align-items:center;justify-content:center;color:#fff}
-.hero-overlay{position:absolute;inset:0;background-image:url('/assets/Gemini_Generated_Image_ji227ji227ji227j.png');background-size:cover;background-position:center;opacity:0.16}
+.hero-overlay{position:absolute;inset:0;background-image:url('/assets/home.png');background-size:cover;background-position:center;opacity:0.16}
 .hero-content{position:relative;text-align:center;padding:20px}
 .hero-content h2{margin:0;font-size:28px;font-weight:800;font-family: 'Montserrat', system-ui, Arial, sans-serif}
 .hero-content p{margin:8px 0 16px;color:rgba(255,255,255,0.95);font-weight:600}

@@ -6,14 +6,19 @@ import { Tabs } from '../../../shared/components/ui/Tabs.jsx'
 import CourseEnrollModal from '../components/CourseEnrollModal.jsx'
 import { useCourses } from '../hooks/useCourses.js'
 import { filterCourses, paginate } from '../utils/coursesUtils.js'
+import { useAuth } from '../../auth/context/AuthContext.jsx'
+import CourseUpsertModal from '../components/CourseUpsertModal.jsx'
+import { IoSearchOutline, IoLibraryOutline } from 'react-icons/io5'
 
 export default function Cursos(){
-  const { courses, loading } = useCourses()
+  const { courses, loading, reload } = useCourses()
+  const { user } = useAuth()
   const [q, setQ] = useState('')
   const [type, setType] = useState('all')
   const [page, setPage] = useState(1)
   const [detailsCourse, setDetailsCourse] = useState(null)
   const [enrollCourse, setEnrollCourse] = useState(null)
+  const [createOpen, setCreateOpen] = useState(false)
   const PAGE_SIZE = 6
 
   const filtered = useMemo(() => {
@@ -49,9 +54,17 @@ export default function Cursos(){
           </div>
         </div>
 
+        {user?.role === 'master' && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+            <button className="btn primary" type="button" onClick={() => setCreateOpen(true)}>
+              Crear curso
+            </button>
+          </div>
+        )}
+
         <div className="courses-toolbar">
           <div className="search-wrap">
-            <span className="search-ico" aria-hidden>🔎</span>
+            <span className="search-ico" aria-hidden><IoSearchOutline /></span>
             <input
               value={q}
               onChange={e=>{ setQ(e.target.value); setPage(1) }}
@@ -87,7 +100,7 @@ export default function Cursos(){
           ))}
           {!loading && filtered.length===0 && (
             <div className="empty-state">
-              <div className="empty-ico" aria-hidden>📚</div>
+              <div className="empty-ico" aria-hidden><IoLibraryOutline /></div>
               <div>
                 <div className="empty-title">No encontramos cursos con esos filtros</div>
                 <div className="empty-text">Prueba con otro término o limpia los filtros.</div>
@@ -112,6 +125,14 @@ export default function Cursos(){
       </main>
       <CourseModal open={!!detailsCourse} onClose={()=>setDetailsCourse(null)} course={detailsCourse} />
       <CourseEnrollModal open={!!enrollCourse} onClose={()=>setEnrollCourse(null)} course={enrollCourse} />
+
+      <CourseUpsertModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={async () => {
+          await reload()
+        }}
+      />
     </>
   )
 }

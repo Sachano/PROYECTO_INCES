@@ -1,0 +1,45 @@
+/* Virtual Classroom */
+.vc-header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 10px}
+.vc-title{margin:0;font-size:22px;font-weight:1000;letter-spacing:-0.02em;display:flex;align-items:center;gap:10px}
+.vc-sub{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+.vc-chip{font-size:12px;font-weight:900;color:var(--muted);background:rgba(16,24,40,0.04);border:1px solid rgba(16,24,40,0.06);padding:6px 10px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+
+.vc-course-card{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px}
+.vc-course-left{display:flex;align-items:center;gap:12px;min-width:260px;flex:1}
+.vc-course-img{width:92px;height:62px;border-radius:14px;object-fit:cover;border:1px solid rgba(16,24,40,0.08);background:#f5f5f5}
+.vc-course-name{font-weight:1000}
+.vc-course-meta{margin-top:4px;color:var(--muted);font-size:13px}
+
+.vc-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.vc-tab{border:1px solid rgba(16,24,40,0.10);background:#fff;color:var(--dark)}
+.vc-tab.active{background:rgba(193,18,31,0.10);border-color:rgba(193,18,31,0.22);color:var(--accent)}
+
+.vc-panel{margin-top:12px}
+
+.vc-post{padding:14px}
+.vc-post-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vc-post-title{margin:0;font-weight:1000;letter-spacing:-0.01em}
+.vc-post-time{color:var(--muted);font-size:12px;font-weight:800}
+.vc-post-desc{margin-top:10px;color:var(--muted)}
+
+.vc-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.vc-badge{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(16,24,40,0.10);background:rgba(16,24,40,0.02)}
+.vc-badge.due{border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.10);color:#92400E}
+.vc-badge.closed{border-color:rgba(244,63,94,0.30);background:rgba(244,63,94,0.08);color:#9F1239}
+
+.vc-files{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.vc-file{display:inline-flex;align-items:center;gap:8px}
+
+.vc-subpanel{margin-top:12px;padding:12px;background:rgba(16,24,40,0.02);border:1px solid rgba(16,24,40,0.06);border-radius:16px}
+.vc-subpanel h4{margin:0;font-weight:1000}
+.vc-subpanel .muted{margin-top:6px}
+
+.vc-students-table{width:100%;border-collapse:collapse}
+.vc-students-table th{background:rgba(16,24,40,0.03);text-align:left;padding:12px;color:var(--muted);font-size:12px;letter-spacing:0.02em;text-transform:uppercase}
+.vc-students-table td{padding:12px}
+.vc-students-table tr{border-top:1px solid rgba(16,24,40,0.06)}
+
+@media (max-width:520px){
+  .vc-course-img{width:84px;height:58px}
+}

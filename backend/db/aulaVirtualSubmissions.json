@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "courseId": 3,
+      "assignmentId": 3,
+      "userId": 1,
+      "submittedAt": "2026-01-14T05:30:39.636Z",
+      "file": {
+        "id": "sf_1768368639634_2f67e6ed71c08",
+        "originalName": "entrega.pdf",
+        "storedName": "1768368639626_2ae472ebd1d1d733b58b2e4924.pdf",
+        "mimeType": "application/pdf",
+        "size": 48,
+        "url": "/uploads/aulaVirtualSubmissions/1768368639626_2ae472ebd1d1d733b58b2e4924.pdf",
+        "uploadedAt": "2026-01-14T05:30:39.634Z"
+      }
+    },
+    {
+      "id": 2,
+      "courseId": 3,
+      "assignmentId": 4,
+      "userId": 1,
+      "submittedAt": "2026-01-14T06:30:09.720Z",
+      "file": {
+        "id": "sf_1768372209716_8d2fa7cf05cf7",
+        "originalName": "Daniel-horaio.pdf",
+        "storedName": "1768372209684_c4e3fe51105a9ae4e8b5c550f.pdf",
+        "mimeType": "application/pdf",
+        "size": 76035,
+        "url": "/uploads/aulaVirtualSubmissions/1768372209684_c4e3fe51105a9ae4e8b5c550f.pdf",
+        "uploadedAt": "2026-01-14T06:30:09.716Z"
+      }
+    },
+    {
+      "id": 3,
+      "courseId": 3,
+      "assignmentId": 5,
+      "userId": 1,
+      "submittedAt": "2026-01-14T05:32:14.688Z",
+      "file": {
+        "id": "sf_1768368734685_89d510c25d5e",
+        "originalName": "entrega.pdf",
+        "storedName": "1768368734673_abb178b706f93434ab31c71e8c.pdf",
+        "mimeType": "application/pdf",
+        "size": 48,
+        "url": "/uploads/aulaVirtualSubmissions/1768368734673_abb178b706f93434ab31c71e8c.pdf",
+        "uploadedAt": "2026-01-14T05:32:14.685Z"
+      }
+    }
+  ]
+}

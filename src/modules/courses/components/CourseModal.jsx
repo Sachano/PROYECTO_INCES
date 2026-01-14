@@ -10,6 +10,7 @@ import {
   IoRibbonOutline,
   IoDownloadOutline,
   IoCheckmarkCircleOutline,
+  IoCloseOutline,
 } from 'react-icons/io5'
 import { getCourseRequirements } from '../utils/courseRequirements.js'
 
@@ -20,8 +21,10 @@ export default function CourseModal({ open, onClose, course }){
   const badgeClass = isVirtual ? 'course-detail-badge virtual' : 'course-detail-badge presencial'
   const typeLabel = isVirtual ? 'Virtual' : 'Presencial'
 
-  const instructor = course.instructor || {}
-  const instructorName = [instructor.firstName, instructor.lastName].filter(Boolean).join(' ') || course.author || 'Docente'
+  const instructor = course.instructor || null
+  const instructorName = instructor
+    ? [instructor.firstName, instructor.lastName].filter(Boolean).join(' ')
+    : 'Sin docente aún'
   const requirements = getCourseRequirements(course.tag)
 
   const description = course.longDescription || course.description || 'Descripción no disponible por el momento.'
@@ -60,7 +63,9 @@ export default function CourseModal({ open, onClose, course }){
             className="course-detail-img"
             loading="lazy"
           />
-          <button className="icon-btn course-detail-close" onClick={onClose} aria-label="Cerrar">✕</button>
+          <button className="icon-btn course-detail-close" onClick={onClose} aria-label="Cerrar" type="button">
+            <IoCloseOutline />
+          </button>
           <div className="course-detail-toplabel">
             <span className="course-detail-topbadge">Detalles del curso</span>
           </div>
@@ -90,9 +95,9 @@ export default function CourseModal({ open, onClose, course }){
               <div className="instructor-body">
                 <div className="instructor-name">{instructorName}</div>
                 <div className="instructor-meta">
-                  <span className="meta-line"><IoRibbonOutline /> {instructor.specialty || 'Especialidad por definir'}</span>
-                  <span className="meta-line"><IoMailOutline /> {instructor.email || 'correo@inces.gob.ve'}</span>
-                  <span className="meta-line"><IoCallOutline /> {instructor.phone || '+58 000-0000000'}</span>
+                  <span className="meta-line"><IoRibbonOutline /> {instructor?.specialty || 'Especialidad por definir'}</span>
+                  <span className="meta-line"><IoMailOutline /> {instructor?.email || '—'}</span>
+                  <span className="meta-line"><IoCallOutline /> {instructor?.phone || '—'}</span>
                 </div>
               </div>
             </div>

@@ -1,31 +1,36 @@
 import React, { useMemo, useState } from 'react'
 import Modal from '../../../shared/components/ui/Modal.jsx'
 import { IoMailOutline, IoPersonOutline } from 'react-icons/io5'
+import { api } from '../../../services/api.js'
+import { useAuth } from '../../auth/context/AuthContext.jsx'
 
 export default function CourseEnrollModal({ open, onClose, course }){
-  const [form, setForm] = useState({ name: '', email: '' })
+  const { user } = useAuth()
   const [status, setStatus] = useState(null)
 
   const title = useMemo(() => course ? `Inscripción: ${course.title}` : 'Inscripción', [course])
 
-  function update(field, value){
-    setForm(f => ({ ...f, [field]: value }))
-  }
-
-  function submit(e){
+  async function submit(e){
     e.preventDefault()
-    if(!form.name.trim() || !form.email.trim()){
-      setStatus({ ok:false, message:'Completa nombre y correo.' })
+    if(!user){
+      setStatus({ ok:false, message:'Debes iniciar sesión para inscribirte.' })
+      return
+    }
+    if(String(user.role) !== 'base'){
+      setStatus({ ok:false, message:'Solo los usuarios base (estudiantes) pueden inscribirse.' })
       return
     }
 
-    // Por ahora: simulación local. Luego podemos implementar flujo completo (backend + perfil/enrolled)
-    setStatus({ ok:true, message:'Solicitud enviada. Te contactaremos por correo.' })
-    setTimeout(() => {
-      setForm({ name:'', email:'' })
-      setStatus(null)
-      onClose()
-    }, 900)
+    try{
+      await api.virtualClassroom.enroll(course.id)
+      setStatus({ ok:true, message:'Inscripción realizada. Ya tienes acceso al aula virtual.' })
+      setTimeout(() => {
+        setStatus(null)
+        onClose()
+      }, 900)
+    }catch{
+      setStatus({ ok:false, message:'No se pudo inscribir. Intenta nuevamente.' })
+    }
   }
 
   if(!course) return null
@@ -45,19 +50,18 @@ export default function CourseEnrollModal({ open, onClose, course }){
       <form id="enroll-form" onSubmit={submit} style={{display:'grid',gap:10}}>
         <div className="muted">{course.author} • {course.hours} hrs • {course.tag}</div>
 
-        <label className="form-row">
-          <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
-            <IoPersonOutline /> Nombre
-          </span>
-          <input value={form.name} onChange={e=>update('name', e.target.value)} placeholder="Tu nombre" />
-        </label>
-
-        <label className="form-row">
-          <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
-            <IoMailOutline /> Correo
-          </span>
-          <input value={form.email} onChange={e=>update('email', e.target.value)} placeholder="tu@correo.com" />
-        </label>
+        <div className="card" style={{ padding: 12 }}>
+          <div style={{display:'grid',gap:6}}>
+            <div style={{display:'inline-flex',alignItems:'center',gap:8,fontWeight:900}}>
+              <IoPersonOutline /> Estudiante
+            </div>
+            <div className="muted">{user ? `${user.firstName} ${user.lastName}` : '—'}</div>
+            <div style={{display:'inline-flex',alignItems:'center',gap:8,fontWeight:900,marginTop:8}}>
+              <IoMailOutline /> Correo
+            </div>
+            <div className="muted">{user?.email || '—'}</div>
+          </div>
+        </div>
 
         {status && (
           <div className={status.ok ? 'toast success' : 'toast error'}>{status.message}</div>

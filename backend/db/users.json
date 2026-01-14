@@ -1,0 +1,69 @@
+[
+  {
+    "id": 1,
+    "uuid": "usr_9c7b8b7b-2f2a-4a7f-bf12-0c5e52b1b7a1",
+    "firstName": "Ana",
+    "lastName": "Pérez",
+    "cedula": "V-12345678",
+    "email": "ana.perez@inces.gob.ve",
+    "phone": "+58 412-0000001",
+    "role": "base",
+    "status": "active",
+    "passwordHash": "$2b$10$ox0wRoqqz7kirxnaREJyAOLmgwGkuX0AS857fUkF/C5aGOJAni/Xi",
+    "avatarUrl": "",
+    "createdAt": "2026-01-13T00:00:00.000Z",
+    "updatedAt": "2026-01-14T06:29:27.257Z",
+    "lastLoginAt": "2026-01-14T06:29:27.257Z",
+    "notifications": [
+      {
+        "id": "n1",
+        "title": "Bienvenida",
+        "message": "Tu cuenta de estudiante fue creada.",
+        "read": false,
+        "createdAt": "2026-01-13T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "uuid": "usr_3d0f1f9f-6b9f-4bde-93db-12b3b6c2f4a0",
+    "firstName": "Carlos",
+    "lastName": "Gómez",
+    "cedula": "V-23456789",
+    "email": "carlos.gomez@inces.gob.ve",
+    "phone": "+58 412-0000002",
+    "role": "admin",
+    "status": "active",
+    "passwordHash": "$2b$10$ox0wRoqqz7kirxnaREJyAOLmgwGkuX0AS857fUkF/C5aGOJAni/Xi",
+    "avatarUrl": "",
+    "createdAt": "2026-01-13T00:00:00.000Z",
+    "updatedAt": "2026-01-14T06:34:48.280Z",
+    "lastLoginAt": "2026-01-14T06:34:48.280Z",
+    "notifications": []
+  },
+  {
+    "id": 3,
+    "uuid": "usr_0b1b9e19-47d6-4f8c-9d0b-59f1b4c5a9b2",
+    "firstName": "María",
+    "lastName": "Rodríguez",
+    "cedula": "V-34567890",
+    "email": "maria.rodriguez@inces.gob.ve",
+    "phone": "+58 412-0000003",
+    "role": "master",
+    "status": "active",
+    "passwordHash": "$2b$10$ox0wRoqqz7kirxnaREJyAOLmgwGkuX0AS857fUkF/C5aGOJAni/Xi",
+    "avatarUrl": "",
+    "createdAt": "2026-01-13T00:00:00.000Z",
+    "updatedAt": "2026-01-14T06:33:08.104Z",
+    "lastLoginAt": "2026-01-14T06:33:08.104Z",
+    "notifications": [
+      {
+        "id": "n2",
+        "title": "Acceso Master",
+        "message": "Tienes acceso completo al sistema.",
+        "read": true,
+        "createdAt": "2026-01-13T00:00:00.000Z"
+      }
+    ]
+  }
+]
