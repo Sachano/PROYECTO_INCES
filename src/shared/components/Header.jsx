@@ -5,12 +5,23 @@ import { IoMenuOutline, IoSearchOutline, IoNotificationsOutline } from 'react-ic
 
 export default function Header(){
   const navigate = useNavigate()
-  const { toggleSidebar } = useUI()
+  const { toggleSidebar, toggleSidebarCollapsed } = useUI()
+
+  function onMenu(){
+    try{
+      const isMobile = window.matchMedia && window.matchMedia('(max-width: 860px)').matches
+      if(isMobile) toggleSidebar()
+      else toggleSidebarCollapsed()
+    }catch{
+      // Fallback seguro
+      toggleSidebarCollapsed()
+    }
+  }
 
   return (
     <header className="app-header">
       <div className="topbar">
-        <button className="icon-btn" aria-label="menu" type="button" onClick={toggleSidebar}>
+        <button className="icon-btn" aria-label="menu" type="button" onClick={onMenu}>
           <IoMenuOutline />
         </button>
         <div className="logo">

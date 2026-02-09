@@ -4,15 +4,21 @@ const UIContext = createContext(null)
 
 export function UIProvider({ children }){
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const value = useMemo(() => {
     return {
       sidebarOpen,
+      sidebarCollapsed,
       openSidebar: () => setSidebarOpen(true),
       closeSidebar: () => setSidebarOpen(false),
       toggleSidebar: () => setSidebarOpen(v => !v),
+
+      collapseSidebar: () => setSidebarCollapsed(true),
+      expandSidebar: () => setSidebarCollapsed(false),
+      toggleSidebarCollapsed: () => setSidebarCollapsed(v => !v),
     }
-  }, [sidebarOpen])
+  }, [sidebarOpen, sidebarCollapsed])
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>
 }
