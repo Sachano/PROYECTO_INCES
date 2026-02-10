@@ -31,11 +31,6 @@ export default function Home(){
                 <a href="/cursos" className="btn primary">Explorar Cursos</a>
                 <a href="/perfil" className="btn ghost">Regístrate</a>
               </div>
-              <div className="hero-dots" aria-hidden>
-                <span className="dot active"></span>
-                <span className="dot"></span>
-                <span className="dot"></span>
-              </div>
             </div>
           </section>
         </div>

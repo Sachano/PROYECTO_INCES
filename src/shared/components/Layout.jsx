@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar.jsx'
+import Footer from './Footer.jsx'
 import { UIProvider, useUI } from '../context/UIContext.jsx'
 
 function Shell({ children }){

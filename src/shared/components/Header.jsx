@@ -1,11 +1,26 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useUI } from '../context/UIContext.jsx'
 import { IoMenuOutline, IoSearchOutline, IoNotificationsOutline } from 'react-icons/io5'
 
 export default function Header(){
   const navigate = useNavigate()
+  const location = useLocation()
   const { toggleSidebar, toggleSidebarCollapsed } = useUI()
+
+  function pageTitleFromPath(pathname){
+    const p = String((pathname||'').split('/')[1]||'').toLowerCase()
+    const map = {
+      '': 'Home',
+      'cursos': 'Cursos',
+      'perfil': 'Perfil',
+      'alertas': 'Alertas',
+      'aula-virtual': 'Aula Virtual',
+      'usuarios': 'Usuarios',
+      'login': 'Entrar'
+    }
+    return map[p] || (p ? p.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Home')
+  }
 
   function onMenu(){
     try{
@@ -17,16 +32,14 @@ export default function Header(){
       toggleSidebarCollapsed()
     }
   }
-
   return (
     <header className="app-header">
       <div className="topbar">
         <button className="icon-btn" aria-label="menu" type="button" onClick={onMenu}>
           <IoMenuOutline />
         </button>
-        <div className="logo">
-          <img src="/assets/logo-small.svg" alt="Inces" />
-        </div>
+        {/* logo removed as requested */}
+        <div className="page-title">{pageTitleFromPath(location.pathname)}</div>
         <div className="right-icons">
           <button className="icon-btn" aria-label="search" type="button" onClick={() => navigate('/cursos')}>
             <IoSearchOutline />
