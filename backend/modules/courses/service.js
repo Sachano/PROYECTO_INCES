@@ -172,3 +172,73 @@ export async function setInstructor({ courseId, instructorUserId }){
   const userById = new Map(users.map(u => [String(u.id), u]))
   return { ok: true, course: expandInstructor(safeCourseBase(items[idx]), userById) }
 }
+
+export async function updateCourse({ courseId, updates = {}, actorRole }){
+  const items = await readCourses()
+  const idx = items.findIndex(i => String(i.id) === String(courseId))
+  if(idx === -1) return { ok: false, error: 'NOT_FOUND' }
+
+  const allowedForMaster = new Set(['title','description','longDescription','hours','tag','img','coverImg','syllabusUrl','instructorUserId'])
+  const allowedForAdmin = new Set(['instructorUserId','hours','longDescription','syllabusUrl'])
+
+  const keys = Object.keys(updates || {})
+  for(const k of keys){
+    if(actorRole === 'master'){
+      if(!allowedForMaster.has(k)) return { ok: false, error: 'FORBIDDEN_FIELD' }
+    }else if(actorRole === 'admin'){
+      if(!allowedForAdmin.has(k)) return { ok: false, error: 'FORBIDDEN_FIELD' }
+    }else{
+      return { ok: false, error: 'FORBIDDEN' }
+    }
+  }
+
+  // Validate and apply instructor change if present
+  if(Object.prototype.hasOwnProperty.call(updates, 'instructorUserId')){
+    const uid = updates.instructorUserId === null || updates.instructorUserId === '' || typeof updates.instructorUserId === 'undefined'
+      ? null
+      : Number(updates.instructorUserId)
+
+    if(uid != null){
+      const users = await readUsers()
+      const u = users.find(x => Number(x.id) === uid)
+      if(!u) return { ok: false, error: 'INSTRUCTOR_NOT_FOUND' }
+      if(String(u.role).toLowerCase() !== 'admin') return { ok: false, error: 'INSTRUCTOR_NOT_ADMIN' }
+      if(String(u.status).toLowerCase() !== 'active') return { ok: false, error: 'INSTRUCTOR_INACTIVE' }
+    }
+
+    items[idx].instructorUserId = uid
+  }
+
+  if(Object.prototype.hasOwnProperty.call(updates, 'hours')){
+    const hrs = toNumberOrNull(updates.hours)
+    if(!hrs) return { ok: false, error: 'MISSING_HOURS' }
+    items[idx].hours = hrs
+  }
+
+  if(Object.prototype.hasOwnProperty.call(updates, 'title')) items[idx].title = String(updates.title || '').trim() || items[idx].title
+  if(Object.prototype.hasOwnProperty.call(updates, 'description')) items[idx].description = String(updates.description || '').trim() || items[idx].description
+  if(Object.prototype.hasOwnProperty.call(updates, 'longDescription')) items[idx].longDescription = String(updates.longDescription || '').trim() || items[idx].longDescription
+  if(Object.prototype.hasOwnProperty.call(updates, 'tag')) items[idx].tag = normalizeTag(updates.tag)
+  if(Object.prototype.hasOwnProperty.call(updates, 'img')) items[idx].img = String(updates.img || '').trim() || items[idx].img
+  if(Object.prototype.hasOwnProperty.call(updates, 'coverImg')) items[idx].coverImg = String(updates.coverImg || '').trim() || items[idx].coverImg
+  if(Object.prototype.hasOwnProperty.call(updates, 'syllabusUrl')) items[idx].syllabusUrl = String(updates.syllabusUrl || '').trim()
+
+  items[idx].updatedAt = nowIso()
+  if(items[idx].instructor) delete items[idx].instructor
+  if(items[idx].author) items[idx].author = 'INCES'
+
+  await writeCourses(items)
+
+  const users = await readUsers()
+  const userById = new Map(users.map(u => [String(u.id), u]))
+  return { ok: true, course: expandInstructor(safeCourseBase(items[idx]), userById) }
+}
+
+export async function deleteCourse(courseId){
+  const items = await readCourses()
+  const idx = items.findIndex(i => String(i.id) === String(courseId))
+  if(idx === -1) return { ok: false, error: 'NOT_FOUND' }
+  const removed = items.splice(idx, 1)[0]
+  await writeCourses(items)
+  return { ok: true, course: safeCourseBase(removed) }
+}

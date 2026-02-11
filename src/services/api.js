@@ -49,6 +49,8 @@ export const api = {
       if(!res.ok) throw new Error(`HTTP ${res.status}`)
       return await res.json()
     },
+    update: async (courseId, data) => http('PUT', `/courses/${courseId}`, data),
+    delete: async (courseId) => http('DELETE', `/courses/${courseId}`),
   },
   alerts: {
     list: async () => http('GET', '/alerts'),

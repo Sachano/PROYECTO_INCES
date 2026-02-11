@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from '../../../shared/components/ui/Modal.jsx'
 import {
   IoTimeOutline,
@@ -13,9 +13,39 @@ import {
   IoCloseOutline,
 } from 'react-icons/io5'
 import { getCourseRequirements } from '../utils/courseRequirements.js'
+import { useAuth } from '../../auth/context/AuthContext.jsx'
+import { api } from '../../../services/api.js'
 
 export default function CourseModal({ open, onClose, course }){
   if(!course) return null
+  const { user } = useAuth()
+  const role = user?.role || null
+  const [busy, setBusy] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [form, setForm] = useState({})
+
+  useEffect(() => {
+    setForm({
+      title: course.title || '',
+      description: course.description || '',
+      longDescription: course.longDescription || '',
+      hours: course.hours || '',
+      syllabusUrl: course.syllabusUrl || '',
+      instructorUserId: course.instructorUserId ?? ''
+    })
+    setEditMode(false)
+  }, [course])
+  const [imageFile, setImageFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState('')
+
+  useEffect(() => {
+    if(imageFile){
+      const url = URL.createObjectURL(imageFile)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setPreviewUrl('')
+  }, [imageFile])
 
   const isVirtual = String(course.tag || '').toLowerCase() === 'virtual'
   const badgeClass = isVirtual ? 'course-detail-badge virtual' : 'course-detail-badge presencial'
@@ -40,18 +70,113 @@ export default function CourseModal({ open, onClose, course }){
       bodyClassName="edge-to-edge"
       footer={
         <div className="course-detail-footer">
-          <button className="btn" onClick={onClose}>Cerrar</button>
-          {syllabusUrl ? (
-            <a className="btn primary" href={syllabusUrl} download>
-              <span className="btn-ico"><IoDownloadOutline /></span>
-              Descargar contenido programático
-            </a>
-          ) : (
-            <button className="btn primary" type="button" disabled title="Próximamente">
-              <span className="btn-ico"><IoDownloadOutline /></span>
-              Descargar contenido programático
-            </button>
-          )}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {role === 'master' && (
+              <button className="btn danger" disabled={busy} onClick={async () => {
+                if(!confirm('¿Eliminar este curso? Esta acción es irreversible.')) return
+                try{
+                  setBusy(true)
+                  await api.courses.delete(course.id)
+                  setBusy(false)
+                  onClose && onClose()
+                  alert('Curso eliminado')
+                }catch(err){
+                  setBusy(false)
+                  alert('No se pudo eliminar el curso')
+                }
+              }}>Eliminar</button>
+            )}
+
+            {(role === 'master' || role === 'admin') && (
+              !editMode ? (
+                <button className="btn" disabled={busy} onClick={() => setEditMode(true)}>Editar</button>
+              ) : (
+                <>
+                  <button className="btn primary" disabled={busy} onClick={async () => {
+                    // Build updates only for allowed fields
+                    const updates = {}
+                    if(role === 'master'){
+                      if(String(form.title || '').trim() !== String(course.title || '')) updates.title = form.title
+                      if(String(form.description || '').trim() !== String(course.description || '')) updates.description = form.description
+                    }
+                    if(String(form.longDescription || '').trim() !== String(course.longDescription || '')) updates.longDescription = form.longDescription
+                    if(Number(form.hours) !== Number(course.hours)) updates.hours = Number(form.hours)
+                    if(String(form.syllabusUrl || '') !== String(course.syllabusUrl || '')) updates.syllabusUrl = form.syllabusUrl
+                    if(String(form.instructorUserId || '') !== String(course.instructorUserId ?? '')) updates.instructorUserId = form.instructorUserId === '' ? null : Number(form.instructorUserId)
+
+                    try{
+                      setBusy(true)
+                      // If an image file was selected, upload it first and include the returned url
+                      if(imageFile){
+                        try{
+                          const uploaded = await api.courses.uploadImage(imageFile)
+                          // prefer coverImg field
+                          if(uploaded && uploaded.url) updates.coverImg = uploaded.url
+                        }catch(e){
+                          // upload failed
+                          console.error('Image upload failed', e)
+                          setBusy(false)
+                          alert('No se pudo subir la imagen')
+                          return
+                        }
+                      }
+
+                      const updated = await api.courses.update(course.id, updates)
+                      setBusy(false)
+                      setEditMode(false)
+                      setImageFile(null)
+                      setPreviewUrl('')
+                      // Update local form and rely on parent to refresh if needed
+                      if(updated && updated.id) {
+                        setForm({
+                          title: updated.title || '',
+                          description: updated.description || '',
+                          longDescription: updated.longDescription || '',
+                          hours: updated.hours || '',
+                          syllabusUrl: updated.syllabusUrl || '',
+                          instructorUserId: updated.instructorUserId ?? ''
+                        })
+                      }
+                      alert('Curso actualizado')
+                    }catch(err){
+                      setBusy(false)
+                      alert('No se pudo actualizar el curso')
+                    }
+                  }}>Guardar</button>
+
+                  <button className="btn" disabled={busy} onClick={() => {
+                    // cancel
+                    setForm({
+                      title: course.title || '',
+                      description: course.description || '',
+                      longDescription: course.longDescription || '',
+                      hours: course.hours || '',
+                      syllabusUrl: course.syllabusUrl || '',
+                      instructorUserId: course.instructorUserId ?? ''
+                    })
+                    setEditMode(false)
+                    setImageFile(null)
+                    setPreviewUrl('')
+                  }}>Cancelar</button>
+                </>
+              )
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn" onClick={onClose}>Cerrar</button>
+            {syllabusUrl ? (
+              <a className="btn primary" href={syllabusUrl} download>
+                <span className="btn-ico"><IoDownloadOutline /></span>
+                Descargar contenido programático
+              </a>
+            ) : (
+              <button className="btn primary" type="button" disabled title="Próximamente">
+                <span className="btn-ico"><IoDownloadOutline /></span>
+                Descargar contenido programático
+              </button>
+            )}
+          </div>
         </div>
       }
     >
@@ -74,7 +199,25 @@ export default function CourseModal({ open, onClose, course }){
 
         <div className="course-detail-content">
           <div className="course-detail-head">
-            <h2 className="course-detail-title">{course.title}</h2>
+            {editMode ? (
+              <div style={{ display: 'grid', gap: 8 }}>
+                {role === 'master' && (
+                  <input className="input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+                )}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'grid' }}>
+                    <label className="muted">Horas</label>
+                    <input className="input" type="number" min="1" value={form.hours} onChange={e => setForm(f => ({ ...f, hours: e.target.value }))} />
+                  </div>
+                  <div style={{ display: 'grid' }}>
+                    <label className="muted">Modalidad</label>
+                    <div className="muted">{String(course.tag || '')}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <h2 className="course-detail-title">{course.title}</h2>
+            )}
             <div className="course-detail-meta">
               <span className="meta-chip">
                 <IoTimeOutline /> {course.hours} hrs
@@ -105,7 +248,32 @@ export default function CourseModal({ open, onClose, course }){
 
           <section className="course-detail-section">
             <h3 className="section-h">Descripción</h3>
-            <p className="course-detail-description">{description}</p>
+            {editMode ? (
+              <div style={{ display: 'grid', gap: 8 }}>
+                {role === 'master' && (
+                  <textarea className="input" rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+                )}
+                <textarea className="input" rows={5} value={form.longDescription} onChange={e => setForm(f => ({ ...f, longDescription: e.target.value }))} />
+                <label className="muted">URL contenido programático</label>
+                <input className="input" value={form.syllabusUrl} onChange={e => setForm(f => ({ ...f, syllabusUrl: e.target.value }))} />
+                <label className="muted">ID docente encargado (vacío para quitar)</label>
+                <input className="input" value={form.instructorUserId} onChange={e => setForm(f => ({ ...f, instructorUserId: e.target.value }))} />
+
+                {role === 'master' && (
+                  <div style={{ display: 'grid', gap: 8 }}>
+                    <label className="muted">Imagen del curso (png/jpg/svg) — opcional</label>
+                    <input type="file" accept="image/png,image/jpeg,image/svg+xml" onChange={e => setImageFile((e.target.files || [])[0] || null)} />
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="preview" style={{ width: 180, height: 100, objectFit: 'cover', borderRadius: 8 }} />
+                    ) : (
+                      (course.coverImg || course.img) && <img src={course.coverImg || course.img} alt="current" style={{ width: 180, height: 100, objectFit: 'cover', borderRadius: 8 }} />
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="course-detail-description">{description}</p>
+            )}
           </section>
 
           <section className="course-detail-section">

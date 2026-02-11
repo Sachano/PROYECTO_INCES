@@ -9,19 +9,9 @@
     "description": "Fundamentos de soldadura, seguridad y prácticas guiadas.",
     "longDescription": "Aprende desde cero los principios esenciales de la soldadura: tipos de unión, preparación de materiales, seguridad industrial y práctica guiada. Este curso está diseñado para que avances paso a paso y construyas habilidades aplicables al trabajo real.",
     "instructorUserId": null,
-    "syllabusUrl": ""
-  },
-  {
-    "id": 2,
-    "title": "Programación Web",
-    "author": "INCES",
-    "hours": 40,
-    "img": "/assets/course2.svg",
-    "tag": "Virtual",
-    "description": "HTML, CSS, JavaScript y proyecto final web responsive.",
-    "longDescription": "Construye páginas web modernas desde cero: estructura con HTML, estilos con CSS, interacción con JavaScript y un proyecto final responsive. Ideal si quieres iniciar en el desarrollo web y armar un portafolio real.",
-    "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "updatedAt": "2026-02-10T23:56:33.929Z",
+    "coverImg": "/uploads/courses/1770767793899_8780f7620850ad43a2c0fe709a8.jpg"
   },
   {
     "id": 3,
@@ -33,7 +23,9 @@
     "description": "Técnicas de carpintería, herramientas y acabado de muebles.",
     "longDescription": "Domina el uso seguro de herramientas, lectura de medidas, ensambles básicos y acabados. Trabajarás con ejercicios prácticos para crear piezas reales y mejorar tu precisión y técnica.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770767904606_9c9cf8c4a377883cf98968cbb1d.jpg",
+    "updatedAt": "2026-02-10T23:58:24.639Z"
   },
   {
     "id": 4,
@@ -45,7 +37,9 @@
     "description": "Instalaciones, normas y seguridad eléctrica en el hogar.",
     "longDescription": "Aprende a instalar y diagnosticar circuitos residenciales con criterio técnico y seguridad. Verás normas, protecciones, conexiones y prácticas orientadas a casos comunes del hogar.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770767888299_696ee104516948eacdd14f05f428.jpg",
+    "updatedAt": "2026-02-10T23:58:08.341Z"
   },
   {
     "id": 5,
@@ -57,7 +51,9 @@
     "description": "Principios de UX, investigación y prototipado básico.",
     "longDescription": "Entiende cómo diseñar experiencias centradas en usuarios: investigación, definición de problemas, prototipado y pruebas. Saldrás con un mini-caso documentado que podrás mostrar.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770767942176_46705255fdf518e32ee1ea535e98.jpg",
+    "updatedAt": "2026-02-10T23:59:02.210Z"
   },
   {
     "id": 6,
@@ -69,7 +65,9 @@
     "description": "Sintaxis de Python, estructuras de datos y scripts prácticos.",
     "longDescription": "Comienza con Python desde lo esencial: variables, estructuras de control, listas y diccionarios. Practica con ejercicios guiados y scripts útiles orientados a problemas reales.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770767999456_ce4f15c3aa0208ccf2019c13ef8.jpg",
+    "updatedAt": "2026-02-10T23:59:59.496Z"
   },
   {
     "id": 7,
@@ -81,7 +79,9 @@
     "description": "Planificación, cronogramas, riesgos y seguimiento.",
     "longDescription": "Aprende a organizar proyectos con claridad: alcance, cronogramas, riesgos y seguimiento. Ideal para coordinar equipos y mejorar resultados con herramientas prácticas.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770768039208_22057a9ceb44a80c1f871d30a718.png",
+    "updatedAt": "2026-02-11T00:00:39.237Z"
   },
   {
     "id": 8,
@@ -93,7 +93,9 @@
     "description": "Técnicas avanzadas TIG y MIG con proyectos reales.",
     "longDescription": "Profundiza en técnicas TIG/MIG avanzadas, control del cordón, selección de material y resolución de defectos. Incluye proyectos prácticos para elevar tu nivel profesional.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770767758037_09b075fcaed8562cdf21af00cb.jpg",
+    "updatedAt": "2026-02-10T23:55:58.075Z"
   },
   {
     "id": 9,
@@ -105,7 +107,9 @@
     "description": "Mantenimiento preventivo y correctivo de vehículos.",
     "longDescription": "Diagnostica y realiza mantenimiento básico con criterios de seguridad: revisión, ajustes, prevención de fallas y buenas prácticas. Perfecto para iniciar en mecánica automotriz.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770768086666_21a71c5b1e2a1884b8e14a50cb18.jpg",
+    "updatedAt": "2026-02-11T00:01:26.706Z"
   },
   {
     "id": 10,
@@ -117,19 +121,9 @@
     "description": "Social media, SEO/SEM y analítica básica.",
     "longDescription": "Conoce las bases para posicionar y medir: redes sociales, SEO/SEM y analítica. Aprende a estructurar campañas simples con indicadores claros.",
     "instructorUserId": null,
-    "syllabusUrl": ""
-  },
-  {
-    "id": 11,
-    "title": "Habilidades blandas",
-    "author": "INCES",
-    "hours": 12,
-    "img": "/assets/course1.svg",
-    "tag": "Virtual",
-    "description": "Comunicación, trabajo en equipo y liderazgo.",
-    "longDescription": "Fortalece tus habilidades para el trabajo: comunicación, colaboración, liderazgo y manejo de conflictos. Actividades prácticas y ejemplos aplicados.",
-    "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770768137940_59a702087ec2842f58584e4d64.jpg",
+    "updatedAt": "2026-02-11T00:02:17.981Z"
   },
   {
     "id": 12,
@@ -141,20 +135,22 @@
     "description": "Diagnóstico y reparación de equipos comunes.",
     "longDescription": "Aprende a diagnosticar fallas frecuentes y aplicar procedimientos de reparación con seguridad. Verás herramientas, mediciones y casos reales de electrodomésticos comunes.",
     "instructorUserId": null,
-    "syllabusUrl": ""
+    "syllabusUrl": "",
+    "coverImg": "/uploads/courses/1770768198262_141165275a3de60eef9636c92a.jpg",
+    "updatedAt": "2026-02-11T00:03:18.298Z"
   },
   {
     "id": 13,
-    "title": "MAMAR BERGAS",
+    "title": "Asistente Administrativo",
     "author": "INCES",
-    "hours": 1,
-    "img": "/uploads/courses/1768372463795_d0abe9e795a9cd1d79918a7f38.jpeg",
+    "hours": 829,
+    "img": "/uploads/courses/1770767467635_c4273cd8e449291e2d4584a3768.jpg",
     "tag": "Presencial",
-    "description": "MAMDOR PROFESIONAL",
-    "longDescription": "ASPIRANTE A MAMADOR PROFECIONAL",
-    "instructorUserId": 2,
+    "description": "Domina la gestión operativa y conviértete en el motor de cualquier oficina. Aprende a coordinar procesos, manejar herramientas digitales y optimizar la administración empresarial con un enfoque profesional y eficiente.",
+    "longDescription": "En este curso de Asistente Administrativo, te prepararás para ser el soporte estratégico que toda organización necesita. No se trata solo de organizar papeles; aprenderás a gestionar el flujo de trabajo de manera integral, combinando habilidades técnicas con una comunicación efectiva, Aprenderas:\n\nGestión Documental: Organización de archivos, redacción técnica de informes y manejo de correspondencia.\n\nHerramientas Digitales: Dominio de software de oficina (Excel, Word y herramientas en la nube) para automatizar tareas.\n\nAtención al Cliente y Proveedores: Técnicas de comunicación asertiva y resolución de conflictos.\n\nContabilidad Básica y Facturación: Manejo de presupuestos, órdenes de compra y procesos administrativos contables.\n\nAl finalizar, tendrás la capacidad de organizar agendas, coordinar reuniones y mantener la operatividad de una empresa bajo estándares de alta calidad, convirtiéndote en un perfil indispensable para PYMES y grandes corporaciones.",
+    "instructorUserId": null,
     "syllabusUrl": "",
-    "createdAt": "2026-01-14T06:34:24.004Z",
-    "updatedAt": "2026-01-14T06:34:30.303Z"
+    "createdAt": "2026-02-10T23:51:07.725Z",
+    "updatedAt": "2026-02-10T23:51:07.725Z"
   }
 ]

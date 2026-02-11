@@ -36,3 +36,24 @@ export async function uploadCourseImage(req, res){
   const { toImageMeta } = await import('./upload.js')
   res.json(toImageMeta(req.file))
 }
+
+export async function updateCourse(req, res){
+  const courseId = req.params.id
+  const updates = req.body || {}
+  const actorRole = req.auth && req.auth.role
+
+  const result = await service.updateCourse({ courseId, updates, actorRole })
+  if(!result.ok){
+    if(result.error === 'NOT_FOUND') return res.status(404).json({ error: result.error })
+    if(result.error === 'FORBIDDEN' || result.error === 'FORBIDDEN_FIELD') return res.status(403).json({ error: result.error })
+    return res.status(400).json({ error: result.error })
+  }
+  res.json(result.course)
+}
+
+export async function deleteCourse(req, res){
+  const courseId = req.params.id
+  const result = await service.deleteCourse(courseId)
+  if(!result.ok) return res.status(404).json({ error: result.error })
+  res.json({ ok: true })
+}
