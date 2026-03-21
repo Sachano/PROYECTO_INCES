@@ -1,4 +1,5 @@
 import express from 'express'
+import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -13,10 +14,18 @@ import virtualClassroomRouter from './modules/virtualClassroom/routes.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const app = express()
-app.use(cors())
-app.use(express.json())
+// load environment variables from backend/.env (explicit path)
+dotenv.config({ path: path.join(__dirname, '.env') })
 
+const app = express()
+
+// Performance optimizations
+app.use(cors())
+// Increase JSON body limit for file uploads
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+
+// API Routes
 app.get('/api/health', (req, res) => res.json({ ok: true }))
 app.use('/api/auth', authRouter)
 app.use('/api/courses', coursesRouter)
@@ -25,9 +34,15 @@ app.use('/api/profile', profileRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/aula-virtual', virtualClassroomRouter)
 
-// Serve static for any assets if needed
-app.use('/public', express.static(path.join(__dirname, '..', 'public')))
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
+// Static files with caching for performance
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
+  maxAge: '1d',
+  etag: true
+}))
+app.use('/public', express.static(path.join(__dirname, '..', 'public'), {
+  maxAge: '1h',
+  etag: true
+}))
 
 const PORT = Number(process.env.PORT) || 3001
 

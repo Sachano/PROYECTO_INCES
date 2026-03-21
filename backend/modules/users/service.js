@@ -1,4 +1,5 @@
 import { readJson, writeJson } from '../../shared/jsonDb.js'
+import { normalizeIdentifier, onlyDigits } from '../../../src/shared/utils.js'
 
 const FILE = 'users.json'
 
@@ -17,8 +18,13 @@ function safeUser(u){
     cedula: u.cedula,
     email: u.email,
     phone: u.phone,
+    emergencyPhone: u.emergencyPhone || '',
     role: u.role,
     status: u.status,
+    enrollment: u.enrollment || '',
+    location: u.location || '',
+    area: u.area || '',
+    securityQuestions: u.securityQuestions || [],
     avatarUrl: u.avatarUrl,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
@@ -71,24 +77,57 @@ export async function setUserStatusById(id, status){
 
 export async function findUserForLogin(identifier){
   const users = await readJson(FILE)
-  const key = String(identifier || '').trim().toLowerCase()
+  // Also check local_users.json
+  try{
+    const localUsers = await readJson('local_users.json')
+    if(localUsers && Array.isArray(localUsers)){
+      const combined = [...users, ...localUsers]
+      return findInUsers(combined, identifier)
+    }
+  }catch(e){ /* ignore */ }
+  return findInUsers(users, identifier)
+}
+
+function findInUsers(users, identifier){
+  const key = normalizeIdentifier(identifier)
   if(!key) return null
+  const keyEmail = key
+  const keyCedula = onlyDigits(key)
 
   const user = users.find(u => {
-    const email = String(u.email || '').trim().toLowerCase()
-    const cedula = String(u.cedula || '').trim().toLowerCase()
-    return email === key || cedula === key
+    const email = normalizeIdentifier(u.email)
+    const cedulaNorm = onlyDigits(u.cedula)
+    if(email && email === keyEmail) return true
+    if(cedulaNorm && keyCedula && cedulaNorm === keyCedula) return true
+    return false
   })
+
   return user || null
 }
 
 export async function updateUser(user){
+  // Try updating the main users.json first
   const users = await readJson(FILE)
-  const idx = users.findIndex(u => String(u.id) === String(user.id))
-  if(idx === -1) return null
-  users[idx] = user
-  await writeJson(FILE, users)
-  return user
+  const idx = users.findIndex(u => String(u.id) === String(user.id) || String(u.uuid) === String(user.uuid))
+  if(idx !== -1){
+    users[idx] = user
+    await writeJson(FILE, users)
+    return user
+  }
+
+  // If not present in main file, try local_users.json (local override)
+  try{
+    const localPath = 'local_users.json'
+    const localUsers = await readJson(localPath)
+    const lidx = localUsers.findIndex(u => String(u.id) === String(user.id) || String(u.uuid) === String(user.uuid))
+    if(lidx !== -1){
+      localUsers[lidx] = user
+      await writeJson(localPath, localUsers)
+      return user
+    }
+  }catch(e){ /* ignore if local file not present or write fails */ }
+
+  return null
 }
 
 export function toSafeUser(user){
