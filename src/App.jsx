@@ -4,9 +4,9 @@ import Layout from './shared/components/Layout.jsx'
 import { AuthProvider } from './modules/auth/context/AuthContext.jsx'
 import RequireAuth from './modules/auth/components/RequireAuth.jsx'
 import RequireRole from './modules/auth/components/RequireRole.jsx'
+import LoginPage from './modules/auth/pages/LoginPage.jsx'
 
-// Lazy load pages for better performance - only load when needed
-const LoginPage = lazy(() => import('./modules/auth/pages/LoginPage.jsx'))
+// Lazy load pages for better performance
 const RegisterPage = lazy(() => import('./modules/auth/pages/RegisterPage.jsx'))
 const ForgotPasswordPage = lazy(() => import('./modules/auth/pages/ForgotPasswordPage.jsx'))
 const ResetPasswordPage = lazy(() => import('./modules/auth/pages/ResetPasswordPage.jsx'))

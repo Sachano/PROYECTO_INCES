@@ -153,6 +153,7 @@ export async function resetPassword({ token, newPassword }){
 export async function register({ 
   firstName, 
   lastName, 
+  cedulaType,
   cedula, 
   email, 
   phone, 
@@ -165,6 +166,18 @@ export async function register({
   if(!firstName || !lastName || !cedula || !email || !phone || !location || !area) {
     return { ok: false, error: 'MISSING_REQUIRED_FIELDS' }
   }
+  
+  // Sanitize inputs to prevent SQL injection
+  const sanitize = (str) => String(str).replace(/[<>\"'`;(){}\[\]|&]/g, '')
+  
+  const sanitizedFirstName = sanitize(firstName)
+  const sanitizedLastName = sanitize(lastName)
+  const sanitizedCedula = sanitize(cedula)
+  const sanitizedEmail = sanitize(email)
+  const sanitizedPhone = sanitize(phone)
+  const sanitizedEmergencyPhone = sanitize(emergencyPhone || '')
+  const sanitizedLocation = sanitize(location)
+  const sanitizedArea = sanitize(area)
   
   // Validate security questions (need at least 2)
   if(!securityQuestions || !Array.isArray(securityQuestions) || securityQuestions.length < 2) {
@@ -200,18 +213,19 @@ export async function register({
   const newUser = {
     id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
     uuid: 'usr_' + crypto.randomUUID(),
-    firstName: String(firstName).trim(),
-    lastName: String(lastName).trim(),
-    cedula: String(cedula).trim(),
+    firstName: sanitizedFirstName.trim(),
+    lastName: sanitizedLastName.trim(),
+    cedulaType: cedulaType || 'V',
+    cedula: sanitizedCedula.trim(),
     email: emailNormalized,
-    phone: String(phone).trim(),
-    emergencyPhone: emergencyPhone ? String(emergencyPhone).trim() : '',
+    phone: sanitizedPhone.trim(),
+    emergencyPhone: sanitizedEmergencyPhone.trim(),
     role: 'base',
     status: 'active',
     passwordHash,
     enrollment,
-    location: location.toUpperCase(),
-    area: area.toUpperCase(),
+    location: sanitizedLocation.toUpperCase(),
+    area: sanitizedArea.toUpperCase(),
     securityQuestions: securityQuestions.map(sq => ({
       question: sq.question,
       answer: String(sq.answer).trim()
@@ -288,4 +302,26 @@ export async function register({
     message: 'Usuario creado exitosamente. Revisa tu correo para tus credenciales.',
     enrollment 
   }
+}
+
+export async function checkDuplicate({ field, value }){
+  const { readJson } = await import('../../shared/jsonDb.js')
+  const users = await readJson('users.json')
+  
+  const normalizedValue = String(value).trim().toLowerCase()
+  
+  const exists = users.some(user => {
+    if(field === 'email'){
+      return String(user.email || '').trim().toLowerCase() === normalizedValue
+    }
+    if(field === 'phone'){
+      return String(user.phone || '').trim() === String(value).trim()
+    }
+    if(field === 'emergencyPhone'){
+      return String(user.emergencyPhone || '').trim() === String(value).trim()
+    }
+    return false
+  })
+  
+  return { exists }
 }

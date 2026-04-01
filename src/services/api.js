@@ -169,3 +169,6 @@ export const api = {
     },
   }
 }
+
+// Export the api object
+export default api

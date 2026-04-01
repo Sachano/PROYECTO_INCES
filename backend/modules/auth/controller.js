@@ -1,4 +1,4 @@
-import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc } from './service.js'
+import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc, checkDuplicate as checkDuplicateSvc } from './service.js'
 
 export async function login(req, res){
   const { identifier, password } = req.body || {}
@@ -39,6 +39,7 @@ export async function register(req, res){
   const { 
     firstName, 
     lastName, 
+    cedulaType,
     cedula, 
     email, 
     phone, 
@@ -51,6 +52,7 @@ export async function register(req, res){
   const result = await registerSvc({ 
     firstName, 
     lastName, 
+    cedulaType,
     cedula, 
     email, 
     phone, 
@@ -69,4 +71,15 @@ export async function register(req, res){
     message: result.message,
     enrollment: result.enrollment 
   })
+}
+
+export async function checkDuplicate(req, res){
+  const { field, value } = req.body || {}
+  
+  if(!field || !value){
+    return res.status(400).json({ error: 'MISSING_DATA' })
+  }
+  
+  const result = await checkDuplicateSvc({ field, value })
+  return res.json({ exists: result.exists })
 }

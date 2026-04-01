@@ -60,12 +60,16 @@ const AREAS = [
   { code: 'RELE', name: 'Reparación de Electrodomésticos' },
 ]
 
+// Cedula types
+const CEDULA_TYPES = ['V', 'J', 'E', 'C', 'G', 'FP']
+
 export default function RegisterPage() {
   const navigate = useNavigate()
   
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    cedulaType: 'V',
     cedula: '',
     email: '',
     phone: '',
@@ -82,18 +86,108 @@ export default function RegisterPage() {
   const [busy, setBusy] = useState(false)
   const [success, setSuccess] = useState(false)
   const [enrollment, setEnrollment] = useState('')
+  const [duplicateErrors, setDuplicateErrors] = useState({
+    email: '',
+    phone: '',
+    emergencyPhone: ''
+  })
 
   function handleChange(e) {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    
+    // Apply input restrictions based on field type
+    let filteredValue = value
+    
+    if (name === 'firstName' || name === 'lastName') {
+      // Only letters (including accented) and spaces
+      filteredValue = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '')
+    } else if (name === 'cedula') {
+      // Only numbers
+      filteredValue = value.replace(/[^0-9]/g, '')
+    } else if (name === 'phone' || name === 'emergencyPhone') {
+      // Only numbers
+      filteredValue = value.replace(/[^0-9]/g, '')
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: filteredValue }))
+    
+    // Clear duplicate error when user changes the field
+    if (duplicateErrors[name]) {
+      setDuplicateErrors(prev => ({ ...prev, [name]: '' }))
+    }
   }
 
   function handleSecurityQuestionChange(index, field, value) {
+    // Only allow letters, numbers, and spaces for security question answers
+    let filteredValue = value
+    if (field === 'answer') {
+      filteredValue = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]/g, '')
+    }
+    
     setFormData(prev => {
       const newQuestions = [...prev.securityQuestions]
-      newQuestions[index] = { ...newQuestions[index], [field]: value }
+      newQuestions[index] = { ...newQuestions[index], [field]: filteredValue }
       return { ...prev, securityQuestions: newQuestions }
     })
+  }
+
+  // Check for duplicate data
+  async function checkDuplicates() {
+    const errors = { email: '', phone: '', emergencyPhone: '' }
+    let hasDuplicates = false
+
+    try {
+      // Check email
+      if (formData.email) {
+        const emailRes = await api.post('/auth/check-duplicate', { 
+          field: 'email', 
+          value: formData.email.trim().toLowerCase() 
+        })
+        if (emailRes.exists) {
+          errors.email = 'Este correo electrónico ya está registrado'
+          hasDuplicates = true
+        }
+      }
+
+      // Check phone
+      if (formData.phone) {
+        const phoneRes = await api.post('/auth/check-duplicate', { 
+          field: 'phone', 
+          value: formData.phone.trim() 
+        })
+        if (phoneRes.exists) {
+          errors.phone = 'Este número de teléfono ya está registrado'
+          hasDuplicates = true
+        }
+      }
+
+      // Check emergency phone
+      if (formData.emergencyPhone) {
+        const emergencyRes = await api.post('/auth/check-duplicate', { 
+          field: 'emergencyPhone', 
+          value: formData.emergencyPhone.trim() 
+        })
+        if (emergencyRes.exists) {
+          errors.emergencyPhone = 'Este teléfono de emergencia ya está registrado'
+          hasDuplicates = true
+        }
+      }
+    } catch (err) {
+      console.error('Error checking duplicates:', err)
+    }
+
+    setDuplicateErrors(errors)
+    return hasDuplicates
+  }
+
+  // Generate 6-character verification token (for future use)
+  function generateVerificationToken() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let token = ''
+    for (let i = 0; i < 6; i++) {
+      token += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return token
   }
 
   async function handleSubmit(e) {
@@ -144,9 +238,22 @@ export default function RegisterPage() {
         return
       }
 
+      // Check for duplicates
+      const hasDuplicates = await checkDuplicates()
+      if (hasDuplicates) {
+        setError('Por favor corrige los datos duplicados antes de continuar')
+        setBusy(false)
+        return
+      }
+
+      // Generate verification token (for future use - not applied yet)
+      const verificationToken = generateVerificationToken()
+      console.log('Verification token generated (for future use):', verificationToken)
+
       const response = await api.post('/auth/register', {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
+        cedulaType: formData.cedulaType,
         cedula: formData.cedula.trim(),
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
@@ -245,7 +352,7 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-shell minimal">
-      <div className="auth-card minimal-card" style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div className="auth-card minimal-card">
         <div className="login-brand">
           <img src="/assets/inces-logo.png" alt="INCES" className="login-logo" />
         </div>
@@ -283,15 +390,26 @@ export default function RegisterPage() {
               />
             </div>
             
-            <div className="input-group">
-              <label className="sr-only">Cédula</label>
+            <div className="input-group" style={{ display: 'flex', gap: '8px' }}>
+              <select
+                className="input"
+                name="cedulaType"
+                value={formData.cedulaType}
+                onChange={handleChange}
+                style={{ width: '80px', appearance: 'auto' }}
+              >
+                {CEDULA_TYPES.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
               <input
                 className="input"
                 name="cedula"
                 value={formData.cedula}
                 onChange={handleChange}
-                placeholder="Cédula (V-12345678 o 12345678) *"
+                placeholder="Cédula (ej: 12345678) *"
                 required
+                style={{ flex: 1 }}
               />
             </div>
           </div>
@@ -313,6 +431,11 @@ export default function RegisterPage() {
                 placeholder="Correo Electrónico *"
                 required
               />
+              {duplicateErrors.email && (
+                <div style={{ color: '#e94560', fontSize: '12px', marginTop: '4px' }}>
+                  {duplicateErrors.email}
+                </div>
+              )}
             </div>
             
             <div className="input-group">
@@ -325,6 +448,11 @@ export default function RegisterPage() {
                 placeholder="Teléfono Celular *"
                 required
               />
+              {duplicateErrors.phone && (
+                <div style={{ color: '#e94560', fontSize: '12px', marginTop: '4px' }}>
+                  {duplicateErrors.phone}
+                </div>
+              )}
             </div>
             
             <div className="input-group">
@@ -336,6 +464,11 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="Teléfono de Emergencia (opcional)"
               />
+              {duplicateErrors.emergencyPhone && (
+                <div style={{ color: '#e94560', fontSize: '12px', marginTop: '4px' }}>
+                  {duplicateErrors.emergencyPhone}
+                </div>
+              )}
             </div>
           </div>
 

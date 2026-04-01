@@ -45,12 +45,14 @@
   background: rgba(255,255,255,0.97); /* pastel white */
   backdrop-filter: blur(6px); /* soften the photo seen through */
   /* shift the card more to the right */
-  margin-left: 14%;
+  margin-left: 5%;
   padding:32px 28px;
   border-radius:18px;
   box-shadow: 0 18px 40px rgba(16,24,40,0.12);
   position:relative; /* keep above pseudo-elements */
   z-index:2;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 /* ensure the card still centers vertically */
@@ -61,7 +63,7 @@
   justify-content:center;
 }
 
-.auth-card.minimal-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;border-radius:16px;width:min(360px,86%);margin-left:26%;background:rgba(255,255,255,0.98);box-shadow:0 20px 48px rgba(16,24,40,0.14);backdrop-filter: blur(6px);position:relative;z-index:2;transform:translateX(18vw);}
+.auth-card.minimal-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;border-radius:16px;width:min(480px,90%);background:rgba(255,255,255,0.98);box-shadow:0 20px 48px rgba(16,24,40,0.14);backdrop-filter: blur(6px);position:relative;z-index:2;}
 .minimal-card{ /* keep legacy classname compatibility */
   width:min(420px, 96%);
 }
@@ -165,3 +167,5 @@ border-bottom:1px solid rgba(16,24,40,0.06)}
   width: 20px;
   height: 20px;
 }
+
+
