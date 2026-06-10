@@ -5,7 +5,9 @@ export async function login(req, res){
   const result = await loginSvc({ identifier, password })
   if(!result.ok){
     const status = result.error === 'MISSING_IDENTIFIER' || result.error === 'MISSING_PASSWORD' ? 400 : 401
-    return res.status(status).json({ error: result.error })
+    const body = { error: result.error }
+    if(result.resetToken) body.resetToken = result.resetToken
+    return res.status(status).json(body)
   }
   res.json({ token: result.token, user: result.user })
 }

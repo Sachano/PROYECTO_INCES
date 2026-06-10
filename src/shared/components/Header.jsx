@@ -1,12 +1,12 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useUI } from '../context/UIContext.jsx'
-import { IoMenuOutline, IoSearchOutline, IoNotificationsOutline } from 'react-icons/io5'
+import { IoMenuOutline, IoSearchOutline, IoNotificationsOutline, IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
 
 export default function Header(){
   const navigate = useNavigate()
   const location = useLocation()
-  const { toggleSidebar, toggleSidebarCollapsed } = useUI()
+  const { toggleSidebar, toggleSidebarCollapsed, theme, toggleTheme } = useUI()
 
   function pageTitleFromPath(pathname){
     const p = String((pathname||'').split('/')[1]||'').toLowerCase()
@@ -43,6 +43,9 @@ export default function Header(){
         <div className="right-icons">
           <button className="icon-btn" aria-label="search" type="button" onClick={() => navigate('/cursos')}>
             <IoSearchOutline />
+          </button>
+          <button className="icon-btn" aria-label="toggle theme" type="button" onClick={toggleTheme}>
+            {theme === 'dark' ? <IoSunnyOutline /> : <IoMoonOutline />}
           </button>
           <button className="icon-btn" aria-label="notifications" type="button" onClick={() => navigate('/alertas')}>
             <IoNotificationsOutline />

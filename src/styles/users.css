@@ -12,7 +12,7 @@
 
 .user-name{font-weight:900}
 
-.status-pill{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(16,24,40,0.10);background:#fff;white-space:nowrap}
+.status-pill{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--card);white-space:nowrap}
 .status-pill::before{content:'';width:8px;height:8px;border-radius:999px;background:rgba(16,24,40,0.30)}
 .status-pill.active{border-color:rgba(18,183,106,0.30);background:rgba(18,183,106,0.08);color:#067647}
 .status-pill.active::before{background:#12B76A}

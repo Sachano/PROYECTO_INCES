@@ -9,10 +9,9 @@ export function ensureDir(dirPath) {
   }
 }
 
-// Validate and sanitize file extensions
-export function safeExt(name, allowedExtensions) {
-  const ext = path.extname(String(name || '')).toLowerCase();
-  return allowedExtensions.includes(ext) ? ext : '';
+// Get the original file extension
+export function safeExt(name) {
+  return path.extname(String(name || '')).toLowerCase();
 }
 
 // Generate a random ID

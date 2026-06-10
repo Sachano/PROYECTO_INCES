@@ -1,17 +1,12 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { readJson, writeJson } from '../../shared/jsonDb.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const dataPath = path.join(__dirname, '../../db/alerts.json')
+const ALERTS_FILE = 'alerts.json'
 
 async function read(){
-  const raw = await fs.readFile(dataPath, 'utf-8')
-  return JSON.parse(raw)
+  return await readJson(ALERTS_FILE)
 }
 async function write(data){
-  await fs.writeFile(dataPath, JSON.stringify(data, null, 2))
+  await writeJson(ALERTS_FILE, data)
 }
 
 export async function listAlerts(){

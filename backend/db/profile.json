@@ -1,13 +1,27 @@
 {
   "id": 1,
   "user_id": 1,
-  "name": "Admin INCES",
-  "username": "admin",
-  "email": "admin@inces.gob.ve",
-  "bio": "Usuario administrador del sistema INCES",
+  "name": "Sachano",
+  "username": "master pro",
+  "email": "y.d.villasan@gmail.com",
+  "bio": "creando el sistema",
   "avatarUrl": "",
   "followers": 0,
   "following": 0,
   "enrolled": [],
-  "updatedAt": "2026-01-01T00:00:00.000Z"
+  "updatedAt": "2026-05-26T05:08:04.669Z",
+  "ok": true,
+  "profile": {
+    "id": 1,
+    "user_id": 1,
+    "name": "Admin INCES",
+    "username": "admin",
+    "email": "y.d.villasan@gmail",
+    "bio": "Usuario administrador del sistema INCES",
+    "avatarUrl": "",
+    "followers": 0,
+    "following": 0,
+    "enrolled": [],
+    "updatedAt": "2026-05-12T19:10:56.772Z"
+  }
 }

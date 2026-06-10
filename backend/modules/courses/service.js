@@ -47,7 +47,7 @@ function expandInstructor(course, userById){
   // Prefer nueva relación por id
   if(out.instructorUserId != null){
     const u = userById.get(String(out.instructorUserId))
-    if(u && String(u.role).toLowerCase() === 'admin'){
+    if(u && String(u.role).toLowerCase() === 'docente'){
       out.instructor = {
         id: u.id,
         firstName: u.firstName,
@@ -116,6 +116,12 @@ export async function createCourse({ title, description, longDescription, hours,
   if(!desc) return { ok: false, error: 'MISSING_DESCRIPTION' }
   if(!hrs) return { ok: false, error: 'MISSING_HOURS' }
 
+  // Length validations
+  if(ttl.length > 20) return { ok: false, error: 'TITLE_TOO_LONG' }
+  if(desc.length > 100) return { ok: false, error: 'DESCRIPTION_TOO_LONG' }
+  if(longDesc.length > 500) return { ok: false, error: 'LONG_DESCRIPTION_TOO_LONG' }
+  if(hrs < 0 || hrs > 99999) return { ok: false, error: 'INVALID_HOURS' }
+
   const items = await readCourses()
   const nextId = items.reduce((m, x) => Math.max(m, Number(x.id) || 0), 0) + 1
   const now = nowIso()
@@ -156,7 +162,7 @@ export async function setInstructor({ courseId, instructorUserId }){
     const users = await readUsers()
     const u = users.find(x => Number(x.id) === uid)
     if(!u) return { ok: false, error: 'INSTRUCTOR_NOT_FOUND' }
-    if(String(u.role).toLowerCase() !== 'admin') return { ok: false, error: 'INSTRUCTOR_NOT_ADMIN' }
+    if(String(u.role).toLowerCase() !== 'docente') return { ok: false, error: 'INSTRUCTOR_NOT_DOCENTE' }
     if(String(u.status).toLowerCase() !== 'active') return { ok: false, error: 'INSTRUCTOR_INACTIVE' }
   }
 
@@ -180,13 +186,16 @@ export async function updateCourse({ courseId, updates = {}, actorRole }){
 
   const allowedForMaster = new Set(['title','description','longDescription','hours','tag','img','coverImg','syllabusUrl','instructorUserId'])
   const allowedForAdmin = new Set(['instructorUserId','hours','longDescription','syllabusUrl'])
+  const allowedForDocente = new Set(['longDescription','syllabusUrl'])
 
   const keys = Object.keys(updates || {})
   for(const k of keys){
     if(actorRole === 'master'){
       if(!allowedForMaster.has(k)) return { ok: false, error: 'FORBIDDEN_FIELD' }
-    }else if(actorRole === 'admin'){
+    }else if(actorRole === 'administrador'){
       if(!allowedForAdmin.has(k)) return { ok: false, error: 'FORBIDDEN_FIELD' }
+    }else if(actorRole === 'docente'){
+      if(!allowedForDocente.has(k)) return { ok: false, error: 'FORBIDDEN_FIELD' }
     }else{
       return { ok: false, error: 'FORBIDDEN' }
     }
@@ -202,7 +211,7 @@ export async function updateCourse({ courseId, updates = {}, actorRole }){
       const users = await readUsers()
       const u = users.find(x => Number(x.id) === uid)
       if(!u) return { ok: false, error: 'INSTRUCTOR_NOT_FOUND' }
-      if(String(u.role).toLowerCase() !== 'admin') return { ok: false, error: 'INSTRUCTOR_NOT_ADMIN' }
+      if(String(u.role).toLowerCase() !== 'docente') return { ok: false, error: 'INSTRUCTOR_NOT_DOCENTE' }
       if(String(u.status).toLowerCase() !== 'active') return { ok: false, error: 'INSTRUCTOR_INACTIVE' }
     }
 
@@ -211,13 +220,25 @@ export async function updateCourse({ courseId, updates = {}, actorRole }){
 
   if(Object.prototype.hasOwnProperty.call(updates, 'hours')){
     const hrs = toNumberOrNull(updates.hours)
-    if(!hrs) return { ok: false, error: 'MISSING_HOURS' }
+    if(!hrs || hrs < 0 || hrs > 99999) return { ok: false, error: 'INVALID_HOURS' }
     items[idx].hours = hrs
   }
 
-  if(Object.prototype.hasOwnProperty.call(updates, 'title')) items[idx].title = String(updates.title || '').trim() || items[idx].title
-  if(Object.prototype.hasOwnProperty.call(updates, 'description')) items[idx].description = String(updates.description || '').trim() || items[idx].description
-  if(Object.prototype.hasOwnProperty.call(updates, 'longDescription')) items[idx].longDescription = String(updates.longDescription || '').trim() || items[idx].longDescription
+  if(Object.prototype.hasOwnProperty.call(updates, 'title')) {
+    const t = String(updates.title || '').trim()
+    if(t.length > 20) return { ok: false, error: 'TITLE_TOO_LONG' }
+    items[idx].title = t || items[idx].title
+  }
+  if(Object.prototype.hasOwnProperty.call(updates, 'description')) {
+    const d = String(updates.description || '').trim()
+    if(d.length > 100) return { ok: false, error: 'DESCRIPTION_TOO_LONG' }
+    items[idx].description = d || items[idx].description
+  }
+  if(Object.prototype.hasOwnProperty.call(updates, 'longDescription')) {
+    const ld = String(updates.longDescription || '').trim()
+    if(ld.length > 500) return { ok: false, error: 'LONG_DESCRIPTION_TOO_LONG' }
+    items[idx].longDescription = ld || items[idx].longDescription
+  }
   if(Object.prototype.hasOwnProperty.call(updates, 'tag')) items[idx].tag = normalizeTag(updates.tag)
   if(Object.prototype.hasOwnProperty.call(updates, 'img')) items[idx].img = String(updates.img || '').trim() || items[idx].img
   if(Object.prototype.hasOwnProperty.call(updates, 'coverImg')) items[idx].coverImg = String(updates.coverImg || '').trim() || items[idx].coverImg

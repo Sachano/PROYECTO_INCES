@@ -68,7 +68,7 @@ async function migrate() {
         `, [
           user.uuid, user.firstName || user.first_name, user.lastName || user.last_name,
           user.cedula, user.email, user.phone, user.emergencyPhone || user.emergency_phone,
-          user.role || 'base', user.status || 'active', user.passwordHash || user.password_hash,
+          user.role || 'estudiante', user.status || 'active', user.passwordHash || user.password_hash,
           user.enrollment, user.location, user.area,
           JSON.stringify(user.securityQuestions || user.security_questions || []),
           user.avatarUrl || user.avatar_url || '',

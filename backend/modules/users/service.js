@@ -1,12 +1,14 @@
 import { readJson, writeJson } from '../../shared/jsonDb.js'
 import { normalizeIdentifier, onlyDigits } from '../../../src/shared/utils.js'
+import { normalizeCedula, generateSecurePassword, generateEnrollment } from '../../shared/utils.js'
+import bcrypt from 'bcryptjs'
 
 const FILE = 'users.json'
 
 function normalizeRole(role){
   const r = String(role || '').toLowerCase()
-  if(r === 'base' || r === 'admin' || r === 'master') return r
-  return null
+  if(r === 'estudiante' || r === 'docente' || r === 'administrador' || r === 'master') return r
+  return 'estudiante'
 }
 
 function safeUser(u){
@@ -31,6 +33,7 @@ function safeUser(u){
     lastLoginAt: u.lastLoginAt,
     notifications: u.notifications || [],
     notificationsCount: Array.isArray(u.notifications) ? u.notifications.length : 0,
+    mustChangePassword: Boolean(u.mustChangePassword),
   }
 }
 
@@ -39,6 +42,156 @@ export async function listUsers({ role } = {}){
   const roleNorm = normalizeRole(role)
   const filtered = roleNorm ? users.filter(u => String(u.role).toLowerCase() === roleNorm) : users
   return filtered.map(safeUser)
+}
+
+export async function createUser(userData){
+  const users = await readJson(FILE)
+  const {
+    firstName,
+    lastName,
+    cedula,
+    cedulaType = 'V',
+    email,
+    phone,
+    emergencyPhone = '',
+    role = 'estudiante',
+    location = '',
+    area = ''
+  } = userData
+
+  // Validaciones alineadas con el flujo de registro público (robusto y consistente)
+  if (!firstName || firstName.length > 50) return { ok: false, error: 'INVALID_FIRST_NAME' }
+  if (!lastName || lastName.length > 50) return { ok: false, error: 'INVALID_LAST_NAME' }
+  if (!cedula || cedula.length < 6 || cedula.length > 10) return { ok: false, error: 'INVALID_CEDULA' }
+  if (!email || email.length > 50 || !email.includes('@')) return { ok: false, error: 'INVALID_EMAIL' }
+  if (!phone || phone.length > 15) return { ok: false, error: 'INVALID_PHONE' }
+
+  // Chequeo de duplicados ROBUSTO usando el mismo normalizador que el registro público
+  const cedulaNorm = normalizeCedula(cedulaType + cedula)
+  const emailNorm = String(email).trim().toLowerCase()
+  const phoneNorm = String(phone).trim()
+
+  const existing = users.find(u => {
+    const uCedula = normalizeCedula((u.cedulaType || '') + u.cedula)
+    return (
+      u.email?.toLowerCase() === emailNorm ||
+      uCedula === cedulaNorm ||
+      String(u.phone || '').trim() === phoneNorm
+    )
+  })
+  if (existing) return { ok: false, error: 'DUPLICATE_DATA' }
+
+  const id = Math.max(...users.map(u => u.id), 0) + 1
+  const uuid = `usr_${role}_${id}_${Date.now()}`
+  
+  // Contraseña temporal segura (ya no usamos 'Temp123!' — alineado con registro público)
+  const tempPassword = generateSecurePassword(12)
+  console.log('DEBUG users.createUser - generated tempPassword length:', tempPassword ? tempPassword.length : 0)
+  const passwordHash = await bcrypt.hash(tempPassword, 10)
+  const now = new Date().toISOString()
+
+  const enrollment = (location && area) ? generateEnrollment(String(location).toUpperCase().trim(), String(area).toUpperCase().trim()) : ''
+
+  // Process security questions: if present, store hashed answers for safety
+  let processedSecurityQuestions = []
+  if (Array.isArray(userData.securityQuestions) && userData.securityQuestions.length) {
+    const bcrypt = await import('bcryptjs')
+    for (const sq of userData.securityQuestions) {
+      const q = String(sq.question || '').trim()
+      const answer = String(sq.answer || '').trim()
+      if (!q || !answer) continue
+      const answerHash = await bcrypt.hash(answer, 10)
+      processedSecurityQuestions.push({ question: q, answerHash })
+    }
+  }
+
+  const newUser = {
+    id,
+    uuid,
+    firstName: String(firstName).trim(),
+    lastName: String(lastName).trim(),
+    cedulaType: String(cedulaType).toUpperCase().trim() || 'V',
+    cedula: String(cedula).trim(),
+    email: emailNorm,
+    phone: phoneNorm,
+    emergencyPhone: String(emergencyPhone).trim(),
+    role: normalizeRole(role),
+    status: 'active',
+    passwordHash,
+    mustChangePassword: true, // for security: force password reset on first login
+    enrollment,
+    location: String(location).toUpperCase().trim(),
+    area: String(area).toUpperCase().trim(),
+    securityQuestions: processedSecurityQuestions,
+    avatarUrl: '',
+    createdAt: now,
+    updatedAt: now,
+    lastLoginAt: null,
+    notifications: []
+  }
+
+  users.push(newUser)
+  await writeJson(FILE, users)
+
+  // Enviar email de bienvenida (intento; no bloquear la respuesta si falla)
+  try {
+    const nodemailer = await import('nodemailer')
+    const { buildWelcomeEmail } = await import('../auth/emailTemplate.js')
+
+    const SMTP_HOST = process.env.SMTP_HOST || ''
+    const SMTP_PORT = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined
+    const SMTP_SECURE = process.env.SMTP_SECURE === 'true'
+    const SMTP_USER = process.env.SMTP_USER || ''
+    const SMTP_PASS = process.env.SMTP_PASS || ''
+    const EMAIL_FROM = process.env.EMAIL_FROM || 'INCES <no-reply@inces.local>'
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+
+    let transporter
+    if (SMTP_HOST && SMTP_USER) {
+      transporter = nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: SMTP_PORT || 587,
+        secure: SMTP_SECURE || false,
+        auth: { user: SMTP_USER, pass: SMTP_PASS }
+      })
+    } else {
+      const testAccount = await nodemailer.createTestAccount()
+      transporter = nodemailer.createTransport({
+        host: testAccount.smtp.host,
+        port: testAccount.smtp.port,
+        secure: testAccount.smtp.secure,
+        auth: { user: testAccount.user, pass: testAccount.pass }
+      })
+    }
+
+    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+    const html = buildWelcomeEmail({
+      logoUrl,
+      userName: firstName,
+      email: emailNorm,
+      password: tempPassword,
+      enrollment
+    })
+
+    const info = await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: emailNorm,
+      subject: 'Bienvenido al INCES - Tus credenciales de acceso',
+      html
+    })
+
+    const preview = nodemailer.getTestMessageUrl ? nodemailer.getTestMessageUrl(info) : null
+    console.log('Welcome email sent (users.create). Preview:', preview || 'N/A')
+  } catch (err) {
+    console.log('Failed to send welcome email (users.create):', err)
+  }
+
+  return { 
+    ok: true, 
+    user: safeUser(newUser),
+    // Devolvemos la contraseña temporal para que el frontend pueda mostrarla o enviarla por email si se desea
+    tempPassword 
+  }
 }
 
 export async function getUserById(id){

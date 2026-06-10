@@ -1,0 +1,2 @@
+mejorar el diseño completo, buscar plantillas para mejorar el diseño
+implementar la bd

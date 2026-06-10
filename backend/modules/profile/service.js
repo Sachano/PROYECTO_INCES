@@ -1,17 +1,12 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { readJson, writeJson } from '../../shared/jsonDb.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const dataPath = path.join(__dirname, '../../db/profile.json')
+const PROFILE_FILE = 'profile.json'
 
 async function read(){
-  const raw = await fs.readFile(dataPath, 'utf-8')
-  return JSON.parse(raw)
+  return await readJson(PROFILE_FILE)
 }
 async function write(data){
-  await fs.writeFile(dataPath, JSON.stringify(data, null, 2))
+  await writeJson(PROFILE_FILE, data)
 }
 
 export async function getProfile(){
@@ -19,8 +14,16 @@ export async function getProfile(){
 }
 
 export async function updateProfile(patch){
+  const { name, username, email, bio } = patch
+
+  // Length validations
+  if (name && name.length > 60) return { ok: false, error: 'NAME_TOO_LONG' }
+  if (username && username.length > 25) return { ok: false, error: 'USERNAME_TOO_LONG' }
+  if (email && email.length > 50) return { ok: false, error: 'EMAIL_TOO_LONG' }
+  if (bio && bio.length > 50) return { ok: false, error: 'BIO_TOO_LONG' }
+
   const current = await read()
   const merged = { ...current, ...patch, updatedAt: new Date().toISOString() }
   await write(merged)
-  return merged
+  return { ok: true, profile: merged }
 }

@@ -85,8 +85,8 @@ export default function VirtualClassroomCoursePage(){
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
-  const canTeach = user?.role === 'admin'
-  const canSeeStudents = user?.role === 'admin' || user?.role === 'master'
+  const canTeach = user?.role === 'docente'
+  const canSeeStudents = user?.role === 'docente' || user?.role === 'administrador' || user?.role === 'master'
 
   const title = useMemo(() => {
     if(active === 'content') return 'Contenido'
@@ -121,7 +121,7 @@ export default function VirtualClassroomCoursePage(){
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState('')
 
-  const isStudent = user?.role === 'base'
+  const isStudent = user?.role === 'estudiante'
   const [submitFileById, setSubmitFileById] = useState({})
   const [submitBusyId, setSubmitBusyId] = useState(null)
   const [submitMsgById, setSubmitMsgById] = useState({})

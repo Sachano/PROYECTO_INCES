@@ -19,12 +19,22 @@ export default function CursoDetail() {
           <div className="course-detail-card">
             <img src={(course && course.img) || '/assets/course1.svg'} alt={(course && course.title) || ''} className="course-detail-img" />
             <div className="course-detail-meta">
-              <h1>{course ? course.title : 'Cargando...'}</h1>
-              <p className="muted">{course ? `${course.hours || 0} hrs • ${course.tag || ''}` : ''}</p>
-              <p className="muted">
-                Docente: {course?.instructor ? `${course.instructor.firstName} ${course.instructor.lastName} (${course.instructor.email})` : 'Sin docente aún'}
-              </p>
-              <p className="lead">{course ? course.description : ''}</p>
+              <div className="course-detail-info">
+                <span className="course-detail-label">Curso</span>
+                <h1 className="course-detail-title">{course ? course.title : 'Cargando...'}</h1>
+                <div className="course-detail-badges">
+                  <span className={`course-detail-badge ${course?.tag === 'Virtual' ? 'virtual' : 'presencial'}`}>
+                    {course?.tag || 'Sin modalidad'}
+                  </span>
+                </div>
+                <p className="muted course-detail-summary">
+                  {course ? `${course.hours || 0} hrs • ${course.tag || 'Sin etiqueta'}` : ''}
+                </p>
+                <p className="muted course-detail-instructor">
+                  Docente: {course?.instructor ? `${course.instructor.firstName} ${course.instructor.lastName} (${course.instructor.email})` : 'Sin docente aún'}
+                </p>
+              </div>
+              <p className="lead course-detail-description">{course ? course.description : ''}</p>
             </div>
           </div>
         </section>

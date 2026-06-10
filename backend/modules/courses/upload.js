@@ -1,3 +1,4 @@
+import path from 'path'
 import { ensureDir, safeExt, randomId, createMulterUpload } from '../../shared/fileUtils.js';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads', 'courses');

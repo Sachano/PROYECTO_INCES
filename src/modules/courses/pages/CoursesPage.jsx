@@ -41,7 +41,7 @@ export default function Cursos(){
     }
 
     // For base users, hide incomplete courses unless they're searching — then show placeholder
-    if(user?.role === 'base'){
+    if(user?.role === 'estudiante'){
       if(!query){
         return courses.filter(c => matchesType(c) && isComplete(c))
       }
@@ -81,23 +81,26 @@ export default function Cursos(){
     <>
       <Header />
       <main className="page-content">
-        <div className="courses-header">
-          <div>
-            <h2 className="courses-title">Cursos</h2>
-            <p className="courses-subtitle">Explora, filtra y revisa detalles en un clic.</p>
+        <section className="courses-panel">
+          <div className="courses-hero">
+            <div>
+              <p className="courses-label">Inicia tu aprendizaje</p>
+              <h2 className="courses-title">Cursos</h2>
+              <p className="courses-subtitle">Explora, filtra y revisa detalles en un clic.</p>
+            </div>
+            <div className="courses-count">
+              {loading ? 'Cargando…' : `${filtered.length} de ${courses.length}`}
+            </div>
           </div>
-          <div className="courses-count">
-            {loading ? 'Cargando…' : `${filtered.length} de ${courses.length}`}
-          </div>
-        </div>
 
-        {user?.role === 'master' && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-            <button className="btn primary" type="button" onClick={() => setCreateOpen(true)}>
-              Crear curso
-            </button>
-          </div>
-        )}
+          {(user?.role === 'master' || user?.role === 'administrador') && (
+            <div className="courses-panel-actions">
+              <button className="btn primary" type="button" onClick={() => setCreateOpen(true)}>
+                Crear curso
+              </button>
+            </div>
+          )}
+        </section>
 
         <div className="courses-toolbar">
           <div className="search-wrap">

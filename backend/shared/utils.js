@@ -105,3 +105,23 @@ export const SECURITY_QUESTIONS = [
   { id: 'pelicula_favorita', question: '¿Cuál es tu película favorita?' },
   { id: 'musica_favorita', question: '¿Cuál es tu género musical favorito?' },
 ]
+
+/**
+ * Normaliza una cédula para comparaciones robustas.
+ * Elimina guiones, puntos, espacios y cualquier carácter no alfanumérico.
+ * Convierte a mayúsculas.
+ * 
+ * Ejemplos:
+ *   "V-12345678" → "V12345678"
+ *   "v 12.345.678" → "V12345678"
+ *   "12345678" → "12345678"
+ * 
+ * Esto permite detectar duplicados independientemente del formato
+ * en que se almacenó la cédula (con o sin prefijo, con o sin guiones).
+ * 
+ * Uso futuro: reutilizar en módulo users/ para unificación de creación de usuarios.
+ */
+export function normalizeCedula(input) {
+  if (!input) return ''
+  return String(input).toUpperCase().replace(/[^A-Z0-9]/g, '')
+}

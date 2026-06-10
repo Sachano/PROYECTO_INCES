@@ -13,7 +13,7 @@ export async function listCourses(req, res){
 
 export async function enroll(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'base') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'estudiante') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const result = await enrollInCourse({ courseId: req.params.courseId, userId: req.auth.sub })
   if(!result.ok){
@@ -25,7 +25,7 @@ export async function enroll(req, res){
 
 export async function students(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'admin') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'docente') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const access = await assertCourseAccess(req.auth, req.params.courseId)
   if(!access.ok) return res.status(access.error === 'COURSE_NOT_FOUND' ? 404 : 403).json({ error: access.error })
@@ -44,7 +44,7 @@ export async function posts(req, res){
 
 export async function create(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'admin') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'docente') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const access = await assertCourseAccess(req.auth, req.params.courseId)
   if(!access.ok) return res.status(access.error === 'COURSE_NOT_FOUND' ? 404 : 403).json({ error: access.error })
@@ -68,7 +68,7 @@ export async function create(req, res){
 
 export async function mySubmission(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'base') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'estudiante') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const access = await assertCourseAccess(req.auth, req.params.courseId)
   if(!access.ok) return res.status(access.error === 'COURSE_NOT_FOUND' ? 404 : 403).json({ error: access.error })
@@ -85,7 +85,7 @@ export async function mySubmission(req, res){
 
 export async function listSubmissions(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'admin') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'docente') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const access = await assertCourseAccess(req.auth, req.params.courseId)
   if(!access.ok) return res.status(access.error === 'COURSE_NOT_FOUND' ? 404 : 403).json({ error: access.error })
@@ -101,7 +101,7 @@ export async function listSubmissions(req, res){
 
 export async function submitSubmission(req, res){
   const role = String(req.auth?.role || '').toLowerCase()
-  if(role !== 'base') return res.status(403).json({ error: 'FORBIDDEN' })
+  if(role !== 'estudiante') return res.status(403).json({ error: 'FORBIDDEN' })
 
   const access = await assertCourseAccess(req.auth, req.params.courseId)
   if(!access.ok) return res.status(access.error === 'COURSE_NOT_FOUND' ? 404 : 403).json({ error: access.error })

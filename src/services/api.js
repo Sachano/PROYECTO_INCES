@@ -12,6 +12,54 @@ function getToken(){
   }
 }
 
+// Error handling utility for API responses
+export const API_ERRORS = {
+  USER_ALREADY_EXISTS: 'Ya existe un usuario con esa cédula o correo electrónico',
+  MISSING_REQUIRED_FIELDS: 'Por favor completa todos los campos requeridos',
+  INVALID_CREDENTIALS: 'Usuario o contraseña incorrectos',
+  TOKEN_EXPIRED: 'La sesión ha expirado. Por favor inicia sesión nuevamente',
+  UNAUTHORIZED: 'No tienes permisos para realizar esta acción',
+  MINIMUM_SECURITY_QUESTIONS: 'Debes seleccionar al menos 2 preguntas de seguridad',
+  NETWORK_ERROR: 'Error de conexión. Verifica tu internet e intenta de nuevo',
+  SERVER_ERROR: 'Error del servidor. Intenta más tarde',
+  UNKNOWN_ERROR: 'Ocurrió un error inesperado. Por favor intenta de nuevo',
+  NOT_FOUND: 'Recurso no encontrado',
+  FORBIDDEN: 'Acceso denegado',
+}
+
+function getApiErrorMessage(error, defaultMsg = API_ERRORS.UNKNOWN_ERROR) {
+  if (!error) return defaultMsg
+
+  const serverError = error?.body?.error
+  const serverMsg = error?.body?.message
+
+  if (serverError && API_ERRORS[serverError]) {
+    return API_ERRORS[serverError]
+  }
+
+  const status = error?.status
+  if (status === 401) return API_ERRORS.UNAUTHORIZED
+  if (status === 403) return API_ERRORS.FORBIDDEN
+  if (status === 404) return API_ERRORS.NOT_FOUND
+  if (status === 500) return API_ERRORS.SERVER_ERROR
+  if (status === 0) return API_ERRORS.NETWORK_ERROR
+
+  if (serverMsg) return serverMsg
+
+  return defaultMsg
+}
+
+function logApiError(error, context = '') {
+  const logData = {
+    context,
+    status: error?.status,
+    error: error?.body?.error,
+    message: error?.body?.message || error?.message,
+    timestamp: new Date().toISOString()
+  }
+  console.error('API Error:', logData)
+}
+
 // Cache utilities
 function getCached(key){
   const entry = apiCache.get(key)
@@ -37,7 +85,7 @@ function clearCache(){
 }
 
 // Export clearCache for manual cache invalidation
-export { clearCache }
+export { clearCache, getApiErrorMessage, logApiError }
 
 async function http(method, url, data, useCache = false){
   const token = getToken()
@@ -124,7 +172,8 @@ export const api = {
     },
     get: async (id) => http('GET', `/users/${id}`, null, true),
     delete: async (id) => http('DELETE', `/users/${id}`),
-    setStatus: async (id, status) => http('PATCH', `/users/${id}/status`, { status })
+    setStatus: async (id, status) => http('PATCH', `/users/${id}/status`, { status }),
+    create: async (data) => http('POST', '/users', data)
   },
   virtualClassroom: {
     listCourses: async () => http('GET', '/aula-virtual/courses', null, true),

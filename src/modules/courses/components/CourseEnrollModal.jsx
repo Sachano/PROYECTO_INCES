@@ -16,8 +16,8 @@ export default function CourseEnrollModal({ open, onClose, course }){
       setStatus({ ok:false, message:'Debes iniciar sesión para inscribirte.' })
       return
     }
-    if(String(user.role) !== 'base'){
-      setStatus({ ok:false, message:'Solo los usuarios base (estudiantes) pueden inscribirse.' })
+    if(String(user.role) !== 'estudiante'){
+      setStatus({ ok:false, message:'Solo los estudiantes pueden inscribirse.' })
       return
     }
 

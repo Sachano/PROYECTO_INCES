@@ -34,7 +34,7 @@ export default function VirtualClassroomHomePage(){
           <div>
             <h1 className="vc-title"><IoSchoolOutline /> Aula Virtual</h1>
             <p className="vc-sub">
-              {user?.role === 'base'
+              {user?.role === 'estudiante'
                 ? 'Accede a tus cursos inscritos y entrega tareas en PDF.'
                 : 'Publica contenido, tareas y notas para tus cursos asignados.'}
             </p>
@@ -57,9 +57,9 @@ export default function VirtualClassroomHomePage(){
               <div>
                 <div style={{ fontWeight: 1000 }}>Sin cursos disponibles</div>
                 <div className="muted" style={{ marginTop: 6 }}>
-                  {user?.role === 'base'
+                  {user?.role === 'estudiante'
                     ? 'Inscríbete en un curso para ver su aula virtual.'
-                    : user?.role === 'admin'
+                    : user?.role === 'docente'
                       ? 'Aún no tienes cursos asignados como docente.'
                       : 'No hay cursos registrados.'}
                 </div>

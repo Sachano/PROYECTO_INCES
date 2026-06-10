@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar.jsx'
 import Footer from './Footer.jsx'
 import { UIProvider, useUI } from '../context/UIContext.jsx'
+import ChatbotButton from '../../modules/chatbot/components/ChatbotButton.jsx'
 
 function Shell({ children }){
   const { sidebarOpen, closeSidebar } = useUI()
@@ -18,6 +19,7 @@ function Shell({ children }){
       <div className="app-main">
         {children ?? <Outlet />}
       </div>
+      <ChatbotButton />
     </div>
   )
 }

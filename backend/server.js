@@ -10,6 +10,7 @@ import profileRouter from './modules/profile/routes.js'
 import authRouter from './modules/auth/routes.js'
 import usersRouter from './modules/users/routes.js'
 import virtualClassroomRouter from './modules/virtualClassroom/routes.js'
+import rateLimit from 'express-rate-limit'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -27,7 +28,16 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 // API Routes
 app.get('/api/health', (req, res) => res.json({ ok: true }))
-app.use('/api/auth', authRouter)
+
+// Rate limiting for auth endpoints to prevent abuse
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false
+})
+
+app.use('/api/auth', authLimiter, authRouter)
 app.use('/api/courses', coursesRouter)
 app.use('/api/alerts', alertsRouter)
 app.use('/api/profile', profileRouter)
@@ -43,6 +53,12 @@ app.use('/public', express.static(path.join(__dirname, '..', 'public'), {
   maxAge: '1h',
   etag: true
 }))
+
+// Global error handler to avoid raw 500 pages and log unexpected failures
+app.use((err, req, res, next) => {
+  console.error('Unhandled server error:', err)
+  res.status(500).json({ error: 'SERVER_ERROR', message: err?.message || 'Internal server error' })
+})
 
 const PORT = Number(process.env.PORT) || 3001
 
@@ -85,3 +101,12 @@ function listen(port){
 }
 
 listen(PORT)
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled promise rejection:', reason)
+})
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err)
+  process.exit(1)
+})

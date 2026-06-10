@@ -15,7 +15,7 @@ export function verifyToken(token){
   return jwt.verify(token, getJwtSecret())
 }
 
-export function requireAuth(req, res, next){
+export async function requireAuth(req, res, next){
   const header = req.headers.authorization || ''
   const token = header.startsWith('Bearer ') ? header.slice(7) : null
   if(!token) return res.status(401).json({ error: 'UNAUTHORIZED' })
@@ -24,16 +24,13 @@ export function requireAuth(req, res, next){
     const decoded = verifyToken(token)
     req.auth = decoded
 
-    // Bloqueo inmediato si el usuario fue deshabilitado
-    Promise.resolve()
-      .then(async () => {
-        const users = await readJson('users.json')
-        const u = Array.isArray(users) ? users.find(x => String(x.id) === String(decoded.sub)) : null
-        if(!u) return res.status(401).json({ error: 'UNAUTHORIZED' })
-        if(String(u.status || '').toLowerCase() !== 'active') return res.status(401).json({ error: 'UNAUTHORIZED' })
-        return next()
-      })
-      .catch(() => res.status(401).json({ error: 'UNAUTHORIZED' }))
+    const users = await readJson('users.json')
+    const user = Array.isArray(users) ? users.find(u => String(u.id) === String(decoded.sub)) : null
+    if(!user || String(user.status || '').toLowerCase() !== 'active') {
+      return res.status(401).json({ error: 'UNAUTHORIZED' })
+    }
+
+    return next()
   }catch{
     return res.status(401).json({ error: 'UNAUTHORIZED' })
   }

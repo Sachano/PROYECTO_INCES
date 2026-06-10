@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../../../services/api.js'
+import { getCharCountDisplay, validateField, VALIDATION_RULES } from '../../../shared/utils'
 
 export default function ForgotPasswordPage(){
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ export default function ForgotPasswordPage(){
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({ email: '', cedula: '' })
 
   function sanitizeEmailInput(v){
     if(!v) return ''
@@ -18,6 +20,30 @@ export default function ForgotPasswordPage(){
   function sanitizeCedulaInput(v){
     if(!v) return ''
     return v.replace(/[^0-9-]/g, '')
+  }
+
+  function handleEmailChange(value) {
+    const sanitized = sanitizeEmailInput(value)
+    setEmail(sanitized)
+    // Validate
+    const validation = validateField('email', sanitized)
+    let errorMsg = validation.error
+    if (sanitized && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sanitized)) {
+      errorMsg = 'Debe contener @ y un dominio válido'
+    }
+    setFieldErrors(prev => ({ ...prev, email: errorMsg }))
+  }
+
+  function handleCedulaChange(value) {
+    const sanitized = sanitizeCedulaInput(value)
+    setCedula(sanitized)
+    // Validate
+    const digits = sanitized.replace(/\D/g, '')
+    let errorMsg = ''
+    if (digits.length > 0 && (digits.length < 6 || digits.length > 10)) {
+      errorMsg = 'La cédula debe tener entre 6 y 10 dígitos'
+    }
+    setFieldErrors(prev => ({ ...prev, cedula: errorMsg }))
   }
 
   async function onSubmit(e){
@@ -65,23 +91,53 @@ export default function ForgotPasswordPage(){
 
           <div className="input-group">
             <label className="sr-only">Correo</label>
-            <input 
-              className="input" 
-              value={email} 
-              onChange={e => setEmail(sanitizeEmailInput(e.target.value))} 
-              placeholder="Correo electrónico" 
+            <input
+              className="input"
+              value={email}
+              onChange={e => handleEmailChange(e.target.value)}
+              placeholder="Correo electrónico"
             />
           </div>
+          {email.length > 0 && (
+            <div style={{
+              fontSize: '11px',
+              marginTop: '4px',
+              textAlign: 'right',
+              color: email.length > VALIDATION_RULES.email.maxLength ? '#e94560' : '#888'
+            }}>
+              {email.length}/{VALIDATION_RULES.email.maxLength} caracteres
+            </div>
+          )}
+          {fieldErrors.email && (
+            <div style={{ color: '#e94560', fontSize: '12px', marginTop: '4px' }}>
+              {fieldErrors.email}
+            </div>
+          )}
 
           <div className="input-group">
             <label className="sr-only">Cédula</label>
-            <input 
-              className="input" 
-              value={cedula} 
-              onChange={e => setCedula(sanitizeCedulaInput(e.target.value))} 
-              placeholder="Número de cédula" 
+            <input
+              className="input"
+              value={cedula}
+              onChange={e => handleCedulaChange(e.target.value)}
+              placeholder="Número de cédula"
             />
           </div>
+          {cedula.length > 0 && (
+            <div style={{
+              fontSize: '11px',
+              marginTop: '4px',
+              textAlign: 'right',
+              color: '#888'
+            }}>
+              {cedula.replace(/\D/g, '').length} dígitos
+            </div>
+          )}
+          {fieldErrors.cedula && (
+            <div style={{ color: '#e94560', fontSize: '12px', marginTop: '4px' }}>
+              {fieldErrors.cedula}
+            </div>
+          )}
 
           {error && <div className="form-error">{error}</div>}
           {message && <div className="auth-samples" style={{marginTop:8}}>{message}</div>}

@@ -43,13 +43,13 @@ export default function Sidebar(){
           <span className="nav-ico"><IoNotificationsOutline /></span> <span className="nav-label">Alertas</span>
         </NavLink>
 
-        {(user?.role === 'base' || user?.role === 'admin') && (
+        {(user?.role === 'estudiante' || user?.role === 'docente' || user?.role === 'administrador' || user?.role === 'master') && (
           <NavLink to="/aula-virtual" className={navClass} onClick={closeSidebar} title="Aula Virtual">
             <span className="nav-ico"><IoSchoolOutline /></span> <span className="nav-label">Aula Virtual</span>
           </NavLink>
         )}
 
-        {user?.role === 'master' && (
+        {(user?.role === 'master' || user?.role === 'administrador') && (
           <NavLink to="/usuarios" className={navClass} onClick={closeSidebar} title="Usuarios">
             <span className="nav-ico"><IoPeopleOutline /></span> <span className="nav-label">Usuarios</span>
           </NavLink>

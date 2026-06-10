@@ -1,6 +1,10 @@
 import pkg from 'pg'
 const { Pool } = pkg
 
+// Importamos el normalizador centralizado para que la lógica de cédula sea consistente
+// en todo el backend (JSON + PostgreSQL path).
+import { normalizeCedula } from './utils.js'
+
 const USE_PG = process.env.USE_PG === 'true'
 
 let pool = null
@@ -47,7 +51,14 @@ export async function findUserByCedula(cedula) {
   if (!USE_PG) {
     const { readJson } = await import('./jsonDb.js')
     const users = await readJson('users.json')
-    return users.find(u => u.cedula?.replace(/\s/g, '').toLowerCase() === cedula.replace(/\s/g, '').toLowerCase())
+    const searchNorm = normalizeCedula(cedula)
+    return users.find(u => {
+      const storedType = (u.cedulaType || '').toUpperCase()
+      const storedNum = String(u.cedula || '').replace(/[^0-9]/g, '')
+      const storedCombined = storedType && storedNum ? storedType + storedNum : ''
+      const storedLegacy = normalizeCedula(u.cedula)
+      return (storedCombined && storedCombined === searchNorm) || (storedLegacy === searchNorm)
+    })
   }
   const p = getPool()
   const res = await p.query('SELECT * FROM users WHERE REPLACE(REPLACE(cedula, \'-\', \'\'), \'.\', \'\') = REPLACE(REPLACE($1, \'-\', \'\'), \'.\', \'\')', [cedula])
@@ -82,7 +93,7 @@ export async function createUser(userData) {
     INSERT INTO users (uuid, first_name, last_name, cedula, email, phone, emergency_phone, role, status, password_hash, enrollment, location, area, security_questions)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     RETURNING *
-  `, [uuid, first_name, last_name, cedula, email, phone, emergency_phone || null, role || 'base', status || 'active', password_hash, enrollment || null, location || null, area || null, JSON.stringify(security_questions || [])])
+  `, [uuid, first_name, last_name, cedula, email, phone, emergency_phone || null, role || 'estudiante', status || 'active', password_hash, enrollment || null, location || null, area || null, JSON.stringify(security_questions || [])])
   
   return res.rows[0]
 }

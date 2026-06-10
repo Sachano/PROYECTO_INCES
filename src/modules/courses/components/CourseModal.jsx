@@ -15,6 +15,7 @@ import {
 import { getCourseRequirements } from '../utils/courseRequirements.js'
 import { useAuth } from '../../auth/context/AuthContext.jsx'
 import { api } from '../../../services/api.js'
+import { VALIDATION_RULES } from '../../../shared/utils'
 
 export default function CourseModal({ open, onClose, course }){
   if(!course) return null
@@ -71,23 +72,25 @@ export default function CourseModal({ open, onClose, course }){
       footer={
         <div className="course-detail-footer">
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {role === 'master' && (
-              <button className="btn danger" disabled={busy} onClick={async () => {
-                if(!confirm('¿Eliminar este curso? Esta acción es irreversible.')) return
-                try{
-                  setBusy(true)
-                  await api.courses.delete(course.id)
-                  setBusy(false)
-                  onClose && onClose()
-                  alert('Curso eliminado')
-                }catch(err){
-                  setBusy(false)
-                  alert('No se pudo eliminar el curso')
-                }
-              }}>Eliminar</button>
-            )}
+              {role === 'master' && (
+                <button className="btn danger" disabled={busy} onClick={async () => {
+                  if(!confirm('¿Eliminar este curso? Esta acción es irreversible.')) return
+                  try{
+                    setBusy(true)
+                    await api.courses.delete(course.id)
+                    setBusy(false)
+                    onClose && onClose()
+                    alert('Curso eliminado exitosamente')
+                    window.location.reload()
+                  }catch(err){
+                    setBusy(false)
+                    console.error('Error al eliminar curso:', err)
+                    alert('No se pudo eliminar el curso')
+                  }
+                }}>Eliminar</button>
+              )}
 
-            {(role === 'master' || role === 'admin') && (
+            {(role === 'master' || role === 'administrador' || role === 'docente') && (
               !editMode ? (
                 <button className="btn" disabled={busy} onClick={() => setEditMode(true)}>Editar</button>
               ) : (
@@ -201,9 +204,24 @@ export default function CourseModal({ open, onClose, course }){
           <div className="course-detail-head">
             {editMode ? (
               <div style={{ display: 'grid', gap: 8 }}>
-                {role === 'master' && (
-                  <input className="input" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
-                )}
+                  {role === 'master' && (
+                    <input className="input" value={form.title} onChange={e => {
+                      let val = e.target.value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\(\)\[\]\.,;:!?¿]/g, '')
+                      // Limitar a 50 caracteres
+                      if(val.length <= VALIDATION_RULES.courseTitle.maxLength) {
+                        setForm(f => ({ ...f, title: val }))
+                      }
+                    }} />
+                  )}
+                  {role === 'master' && form.title.length > 0 && (
+                    <div style={{
+                      fontSize: '10px',
+                      textAlign: 'right',
+                      color: form.title.length > VALIDATION_RULES.courseTitle.maxLength ? '#e94560' : '#888'
+                    }}>
+                      {form.title.length}/{VALIDATION_RULES.courseTitle.maxLength} caracteres
+                    </div>
+                  )}
                 <div style={{ display: 'flex', gap: 8 }}>
                   <div style={{ display: 'grid' }}>
                     <label className="muted">Horas</label>
@@ -250,14 +268,27 @@ export default function CourseModal({ open, onClose, course }){
             <h3 className="section-h">Descripción</h3>
             {editMode ? (
               <div style={{ display: 'grid', gap: 8 }}>
-                {role === 'master' && (
-                  <textarea className="input" rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
-                )}
+                 {role === 'master' && (
+                   <textarea className="input" rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+                 )}
+                 {role === 'master' && form.description.length > 0 && (
+                   <div style={{
+                     fontSize: '10px',
+                     textAlign: 'right',
+                     color: form.description.length > 500 ? '#e94560' : '#888'
+                   }}>
+                     {form.description.length}/500 caracteres
+                   </div>
+                 )}
                 <textarea className="input" rows={5} value={form.longDescription} onChange={e => setForm(f => ({ ...f, longDescription: e.target.value }))} />
                 <label className="muted">URL contenido programático</label>
                 <input className="input" value={form.syllabusUrl} onChange={e => setForm(f => ({ ...f, syllabusUrl: e.target.value }))} />
-                <label className="muted">ID docente encargado (vacío para quitar)</label>
-                <input className="input" value={form.instructorUserId} onChange={e => setForm(f => ({ ...f, instructorUserId: e.target.value }))} />
+                {(role === 'master' || role === 'administrador') && (
+                  <>
+                    <label className="muted">ID docente encargado (vacío para quitar)</label>
+                    <input className="input" value={form.instructorUserId} onChange={e => setForm(f => ({ ...f, instructorUserId: e.target.value }))} />
+                  </>
+                )}
 
                 {role === 'master' && (
                   <div style={{ display: 'grid', gap: 8 }}>

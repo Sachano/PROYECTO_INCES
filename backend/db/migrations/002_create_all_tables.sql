@@ -1,9 +1,4 @@
--- ============================================
--- Complete migration for INCES Platform
--- PostgreSQL Schema
--- ============================================
 
--- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================
@@ -18,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE NOT NULL,
     phone TEXT,
     emergency_phone TEXT,
-    role TEXT NOT NULL DEFAULT 'base' CHECK (role IN ('base', 'admin', 'master')),
+    role TEXT NOT NULL DEFAULT 'estudiante' CHECK (role IN ('estudiante', 'docente', 'administrador', 'master')),
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended')),
     password_hash TEXT NOT NULL,
     enrollment TEXT,
@@ -176,6 +171,31 @@ CREATE TRIGGER update_courses_updated_at BEFORE UPDATE ON courses
 
 CREATE TRIGGER update_aula_virtual_posts_updated_at BEFORE UPDATE ON aula_virtual_posts
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- CHECK CONSTRAINTS FOR VALIDATIONS
+-- ============================================
+
+-- Users table constraints
+ALTER TABLE users ADD CONSTRAINT check_cedula_length CHECK (length(cedula) <= 8);
+ALTER TABLE users ADD CONSTRAINT check_email_length CHECK (length(email) <= 50);
+ALTER TABLE users ADD CONSTRAINT check_password_positive CHECK (length(password_hash) > 0);
+
+-- Courses table constraints
+ALTER TABLE courses ADD CONSTRAINT check_title_length CHECK (length(title) <= 20);
+ALTER TABLE courses ADD CONSTRAINT check_description_length CHECK (length(description) <= 100);
+ALTER TABLE courses ADD CONSTRAINT check_long_description_length CHECK (length(long_description) <= 500);
+ALTER TABLE courses ADD CONSTRAINT check_hours_range CHECK (hours >= 0 AND hours <= 99999);
+
+-- Profiles table constraints
+ALTER TABLE profiles ADD CONSTRAINT check_profiles_name_length CHECK (length(name) <= 60);
+ALTER TABLE profiles ADD CONSTRAINT check_username_length CHECK (length(username) <= 25);
+ALTER TABLE profiles ADD CONSTRAINT check_profiles_email_length CHECK (length(email) <= 50);
+ALTER TABLE profiles ADD CONSTRAINT check_bio_length CHECK (length(bio) <= 50);
+
+-- Aula virtual submissions constraints (grade as text/json)
+-- Note: grade is JSONB, so length check on json string representation
+-- ALTER TABLE aula_virtual_submissions ADD CONSTRAINT check_grade_length CHECK (length(grade::text) <= 24);
 
 -- ============================================
 -- SEED DATA (Optional - for development)

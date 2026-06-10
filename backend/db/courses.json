@@ -152,5 +152,19 @@
     "syllabusUrl": "",
     "createdAt": "2026-02-10T23:51:07.725Z",
     "updatedAt": "2026-02-10T23:51:07.725Z"
+  },
+  {
+    "id": 14,
+    "title": "probando",
+    "author": "INCES",
+    "hours": 5,
+    "img": "/assets/course1.svg",
+    "tag": "Virtual",
+    "description": "akjkjskajska",
+    "longDescription": "lxlsklk",
+    "instructorUserId": null,
+    "syllabusUrl": "",
+    "createdAt": "2026-05-13T22:20:16.962Z",
+    "updatedAt": "2026-05-13T22:20:16.962Z"
   }
 ]
