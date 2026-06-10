@@ -1,147 +1,272 @@
-# INCES App (Cursos)
+# INCES - Plataforma de Gestión de Cursos y Aula Virtual
 
-Aplicación de cursos con frontend en React + Vite y backend local simulado con Express. Incluye páginas: Home, Cursos, Perfil y Alertas (tipo inbox). La opción de Ajustes se removió.
+Aplicación web completa para la gestión de cursos, usuarios, aula virtual, notificaciones y panel administrativo del INCES.
 
-## Estructura
-- `src/` Frontend React
-	- `components/` Componentes reutilizables (UI, modales, tarjetas)
-	- `pages/` Vistas: Home, Cursos, Perfil, Alertas, CursoDetail
-	- `services/api.js` Cliente HTTP hacia `/api`
-	- `styles/` Estilos modulares por componente/página
-- `backend/` API local simulada (Express)
-	- `routes/`, `controllers/`, `services/`, `data/`
+## Stack Tecnológico
 
-## Ejecutar en desarrollo (Windows PowerShell)
-1. Instalar dependencias
+- **Frontend:** React 18 + Vite, React Router, React Icons
+- **Backend:** Express.js (API REST)
+- **Base de datos:** JSON files (desarrollo) / PostgreSQL (producción)
+- **Seguridad:** bcrypt (hashing), express-rate-limit, JWT
+- **Email:** Nodemailer (Ethereal fallback para desarrollo)
+
+## Estructura del Proyecto
+
+```
+src/
+├── modules/
+│   ├── auth/        # Login, registro, recuperación de contraseña, 2FA
+│   ├── users/       # Gestión de usuarios (admin/master)
+│   ├── courses/     # Catálogo de cursos, inscripciones
+│   ├── profile/     # Perfil de usuario
+│   ├── alerts/      # Notificaciones tipo inbox
+│   ├── aulaVirtual/ # Aula virtual, tareas, entregas
+│   ├── dashboard/   # Dashboard de estadísticas
+│   └── chatbot/     # Chatbot de ayuda
+├── services/        # Cliente HTTP, manejo de errores
+├── shared/          # Componentes, utilidades, estilos, i18n, logger
+└── styles/          # CSS modular por componente
+
+backend/
+├── modules/
+│   ├── auth/        # Login, registro, reset password, 2FA
+│   ├── users/       # CRUD usuarios, validaciones, soft delete
+│   ├── courses/     # Gestión de cursos, instructores
+│   ├── profile/     # Perfil y cambio de contraseña
+│   ├── alerts/      # Notificaciones
+│   ├── aulaVirtual/ # Posts, assignments, submissions
+│   ├── certificates/# Generación de certificados
+│   ├── backups/     # Backups automáticos
+│   ├── docs/        # Documentación API
+│   └── notifications/# WebSockets notificaciones
+├── shared/          # Auth, DB adapter, validaciones, auditoría
+├── db/              # Migraciones PostgreSQL, seed
+└── scripts/         # Backup automático, validaciones
+```
+
+## Ejecutar en Desarrollo
+
+### Requisitos
+- Node.js >= 16
+- npm
+
+### Instalación
 ```powershell
 npm install
 ```
-2. Levantar backend y frontend juntos
+
+### Desarrollo (frontend + backend)
 ```powershell
 npm run dev:all
 ```
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3002
 
-También puedes iniciar por separado:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3001
+
+### Desarrollo por separado
 ```powershell
+# Terminal 1 - Backend
 npm run server
+
+# Terminal 2 - Frontend
 npm run dev
 ```
 
-## Usar PostgreSQL (Opcional)
+## Credenciales de Acceso
 
-Por defecto, la aplicación usa archivos JSON para desarrollo local. PostgreSQL es opcional y solo debe activarse cuando tengas la base de datos configurada y las credenciales correctas.
+| Rol | Email | Contraseña |
+|-----|-------|------------|
+| Master | sachano@gmail.com | Sachano |
+| Administrador | admin@inces.gob.ve | Admin123! |
+| Administrador 2 | admin2@inces.gob.ve | Admin123! |
+| Docente | docente@inces.gob.ve | Docente123! |
+| Estudiante | demo@inces.gob.ve | Demo123! |
 
-### 1. Configurar PostgreSQL
-Instala PostgreSQL y crea una base de datos:
-```sql
-CREATE DATABASE inces;
+> **Nota:** Todos los usuarios creados por admin tienen contraseña temporal generada automáticamente y deben cambiarla en el primer login.
+
+## Funcionalidades Implementadas
+
+### Autenticación y Seguridad
+- ✅ Login con email o cédula (detección automática)
+- ✅ Registro público con validaciones completas
+- ✅ Recuperación de contraseña por email
+- ✅ Cambio de contraseña desde perfil
+- ✅ Rate limiting en autenticación (30 req/min)
+- ✅ Contraseñas hasheadas con bcrypt (10 rounds)
+- ✅ 2FA/TOTP disponible (backend)
+- ✅ Verificación de email (backend)
+- ✅ Protección contra duplicados (cédula, email, teléfono)
+
+### Gestión de Usuarios
+- ✅ CRUD completo de usuarios (solo master)
+- ✅ Asignación de cursos a administradores
+- ✅ Activación/desactivación de usuarios
+- ✅ Soft delete real + restauración
+- ✅ Logs de auditoría básicos
+- ✅ Validación centralizada backend+frontend
+
+### Cursos
+- ✅ Catálogo de cursos con paginación real
+- ✅ Filtros por tipo (Virtual/Presencial)
+- ✅ Búsqueda por título
+- ✅ Asignación de instructores docentes
+- ✅ Subida de imagen de portada
+- ✅ Validaciones de título, descripción, horas
+
+### Aula Virtual
+- ✅ Inscripción en cursos
+- ✅ Posts de contenido, tareas y calificaciones
+- ✅ Entregas de assignments por estudiantes
+- ✅ Listado de estudiantes por curso
+- ✅ Permisos por rol (docente/admin/estudiante)
+
+### Perfil de Usuario
+- ✅ Edición de datos personales
+- ✅ Cambio de contraseña con validación
+- ✅ Contadores de caracteres en tiempo real
+
+### Notificaciones
+- ✅ Sistema de notificaciones tipo inbox
+- ✅ Marcado como leído
+- ✅ Alertas automáticas (nuevo docente, actualizaciones)
+
+### Dashboard
+- ✅ Panel de estadísticas para master/admin
+- ✅ Conteo de usuarios, cursos, inscripciones, alertas
+
+### Características Técnicas
+- ✅ ErrorBoundary global para captura de errores React
+- ✅ Manejo centralizado de errores de API
+- ✅ Lazy loading de páginas para mejor performance
+- ✅ Cache de GET requests (30 segundos)
+- ✅ Sidebar responsive (overlay en móvil)
+- ✅ Sistema de temas (claro/oscuro)
+- ✅ Diseño responsive adaptado para móvil y escritorio
+- ✅ ESLint + Prettier configurados
+- ✅ Tests automatizados básicos
+- ✅ Logger estructurado
+- ✅ Compresión de imágenes al subir
+- ✅ Backups automáticos de JSON
+- ✅ Docker + docker-compose
+- ✅ CI/CD GitHub Actions
+- ✅ Accesibilidad básica (a11y)
+- ✅ Internacionalización base (i18n) - ES/EN
+- ✅ Búsqueda full-text básica
+- ✅ Documentación API base (OpenAPI)
+
+## API Endpoints Principales
+
+```
+Auth:
+POST   /api/auth/login
+POST   /api/auth/register
+POST   /api/auth/forgot
+POST   /api/auth/reset
+POST   /api/auth/check-duplicate
+POST   /api/auth/2fa/enable
+POST   /api/auth/2fa/verify
+
+Users:
+GET    /api/users
+GET    /api/users/:id
+POST   /api/users
+DELETE /api/users/:id
+PATCH  /api/users/:id/status
+
+Courses:
+GET    /api/courses
+GET    /api/courses/:id
+POST   /api/courses
+PUT    /api/courses/:id
+DELETE /api/courses/:id
+POST   /api/courses/upload-image
+
+Profile:
+GET    /api/profile
+PUT    /api/profile
+POST   /api/profile/password
+
+Alerts:
+GET    /api/alerts
+POST   /api/alerts/:id/read
+
+Aula Virtual:
+GET    /api/aula-virtual/courses
+POST   /api/aula-virtual/courses/:id/enroll
+GET    /api/aula-virtual/courses/:id/students
+GET    /api/aula-virtual/courses/:id/posts
+POST   /api/aula-virtual/courses/:id/posts
+GET    /api/aula-virtual/courses/:id/assignments/:id/submissions/me
+POST   /api/aula-virtual/courses/:id/assignments/:id/submissions
+
+Certificados:
+GET    /api/certificates
+POST   /api/certificates/issue
+
+Backups:
+GET    /api/backups
+
+Docs:
+GET    /api/docs/openapi.json
 ```
 
-### 2. Configurar variables de entorno
-Edita `backend/.env` y usa estos valores si tienes PostgreSQL listo:
+## Variables de Entorno
+
 ```env
-USE_PG=true
+# Backend (.env)
+PORT=3001
+JWT_SECRET=tu-secreto-jwt
+FRONTEND_URL=http://localhost:5173
+
+# Opcional - Email SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=tu-email@gmail.com
+SMTP_PASS=tu-contraseña
+EMAIL_FROM=INCES <no-reply@inces.gob.ve>
+
+# Opcional - PostgreSQL
+USE_PG=false
 PG_HOST=localhost
 PG_PORT=5432
 PG_USER=postgres
-PG_PASS=tu-contraseña
+PG_PASS=
 PG_DB=inces
+
+# Opcional - 2FA
+TOTP_ISSUER=INCES
 ```
 
-### 3. Ejecutar migraciones
+## Comandos Disponibles
+
 ```powershell
-psql -U postgres -d inces -f backend/db/migrations/001_create_tables.sql
-psql -U postgres -d inces -f backend/db/migrations/002_create_all_tables.sql
-node backend/db/migrations/migrate_to_pg.js
+npm run dev          # Frontend only
+npm run server       # Backend only
+npm run dev:all      # Frontend + Backend
+npm run build        # Build producción frontend
+npm run lint         # Ejecutar ESLint
+npm run lint:fix     # Ejecutar ESLint + auto-fix
+npm run format       # Formatear con Prettier
+npm run test         # Tests automatizados
+npm run migrate:pg   # Migrar datos JSON a PostgreSQL
+npm run backup       # Ejecutar backup manual
 ```
 
-### 4. Iniciar la aplicación
+## Docker
+
 ```powershell
-npm run server
-npm run dev
+docker compose up --build
 ```
 
-Si no tienes PostgreSQL configurado, deja `USE_PG=false` y la aplicación continuará con datos locales JSON.
+Acceso: http://localhost:3002
 
-## API Endpoints
-- `GET /api/courses` – lista (query `type`, `q`)
-- `GET /api/courses/:id` – detalle
-- `GET /api/alerts` – inbox de alertas
-- `POST /api/alerts/:id/read` – marcar leída
-- `GET /api/profile` – obtener perfil
-- `PUT /api/profile` – actualizar perfil
+## Próximas Mejoras
 
-## Notas de diseño
-- Estilos divididos en `src/styles/*` (archivos < 600 líneas)
-- `Cursos` incluye tabs (Virtual/Presencial/Todos) y modal con detalles.
-- `Perfil` con layout tipo red social (avatar iniciales + stats).
-- `Alertas` con vista tipo bandeja de entrada (Gmail-like).
-
-## Próximos pasos sugeridos
-- Añadir paginación desde backend
-- Autenticación (mock) y estado global (Redux/Zustand)
-- Subida de avatar a `public/` o un servicio
-- Implementar en el login un marcador de cedula (V,E,P) y bloquear los caracteres espereciales
-
-## Usuarios de prueba
-- Master: sachano@gmail.com / Sachano
-- Admin: admin@inces.gob.ve / Admin123!
-- Demo (estudiante): demo@inces.gob.ve / Demo123!
-- Administrador: admin2@inces.gob.ve / Admin123!
-- Docente: docente@inces.gob.ve / Docente123!
-
-## Validaciones de Formularios
-
-La aplicación incluye validaciones exhaustivas en los formularios para asegurar la integridad de los datos. Todas las validaciones se muestran visualmente debajo de cada campo en tiempo real, incluyendo contadores de caracteres, mensajes de error específicos y indicadores de formato válido/inválido.
-
-### Reglas de Validación por Campo
-
-#### Registro de Usuario (`RegisterPage`)
-- **Nombres (firstName)**: Máximo 50 caracteres, solo letras y espacios (acentos permitidos), requerido.
-- **Apellidos (lastName)**: Máximo 50 caracteres, solo letras y espacios, requerido.
-- **Cédula**: Tipo (V/J/E/C/G/FP) + número (6-10 dígitos), solo números en la parte numérica, requerido. Validación de duplicados asíncrona.
-- **Correo Electrónico (email)**: Máximo 50 caracteres, formato válido (@ y dominio), requerido. Validación de duplicados.
-- **Teléfono Celular (phone)**: Máximo 15 caracteres, solo números, mínimo 10 dígitos, requerido. Validación de duplicados.
-- **Teléfono de Emergencia (emergencyPhone)**: Máximo 15 caracteres, solo números, opcional. Validación de duplicados y no igual al teléfono personal.
-- **Preguntas de Seguridad**: Mínimo 2 preguntas con respuestas (máximo 50 caracteres por respuesta, solo letras/números/espacios), requerido.
-
-#### Inicio de Sesión (`LoginPage`)
-- **Identificador**: Email o cédula (6-10 dígitos), formato válido detectado automáticamente.
-- **Contraseña**: Requerido.
-
-#### Recuperar Contraseña (`ForgotPasswordPage`)
-- **Correo Electrónico**: Máximo 50 caracteres, formato válido (@ y dominio), opcional (uno de los dos requerido).
-- **Cédula**: Solo números, 6-10 dígitos, opcional.
-
-#### Restablecer Contraseña (`ResetPasswordPage`)
-- **Contraseña**: Mínimo 8 caracteres, máximo 32, debe contener letra y número, requerido. Indicador visual de fuerza (Débil/Medio/Fuerte).
-- **Confirmar Contraseña**: Debe coincidir con contraseña, requerido.
-
-#### Crear/Editar Curso (`CourseUpsertModal`)
-- **Título (title)**: Máximo 20 caracteres, requerido.
-- **Descripción (description)**: Máximo 100 caracteres, requerido.
-- **Descripción Larga (longDescription)**: Máximo 500 caracteres, opcional.
-- **Horas (hours)**: Mínimo 0, máximo 99999, solo números, requerido.
-- **Imagen**: Archivo de imagen, opcional.
-
-#### Perfil de Usuario (`ProfilePage`)
-- **Nombre (name)**: Máximo 60 caracteres, opcional.
-- **Usuario (username)**: Máximo 25 caracteres, opcional.
-- **Correo Electrónico (email)**: Máximo 50 caracteres, formato válido, opcional.
-- **Bio**: Máximo 50 caracteres, opcional.
-
-### Características de las Validaciones Visuales
-- **Contadores de Caracteres**: Se muestran cuando el usuario escribe, indicando el límite actual vs máximo. Colores: gris para normal, rojo para excedido.
-- **Mensajes de Error**: Aparecen inmediatamente si se viola una regla (ej. "Máximo 50 caracteres", "Campo requerido", "Debe contener @ y un dominio válido").
-- **Validaciones Asíncronas**: Para campos únicos (email, teléfono, cédula), se verifica duplicados en tiempo real mostrando errores específicos.
-- **Sanitización de Input**: Los campos restringen caracteres no permitidos (ej. solo números en teléfonos, solo letras en nombres).
-- **Feedback en Tiempo Real**: No hay espera al submit; los errores se muestran mientras se escribe para una experiencia amigable.
-
-Estas validaciones aseguran datos consistentes y previenen errores comunes, mejorando la usabilidad de la aplicación.
-
-## Notas de Seguridad
-- El archivo `backend/.env` contiene credenciales sensibles y NO debe ser commitado
-- Los archivos JSON en `backend/db/` contienen datos de ejemplo para desarrollo
-- En producción, usa PostgreSQL y configura variables de entorno apropiadamente
+- Migración completa a PostgreSQL como única fuente de verdad
+- Generación de certificados PDF descargables
+- Dashboard de reportes avanzados con gráficos
+- Verificación de email obligatoria en registro
+- WebSockets para notificaciones en tiempo real
+- Escaneo de archivos subidos (antivirus)
+- Búsqueda full-text avanzada (Meilisearch/Elasticsearch)
