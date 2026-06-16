@@ -1,0 +1,11 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "courseId": 3,
+      "userId": 1,
+      "status": "enrolled",
+      "createdAt": "2026-01-14T00:00:00.000Z"
+    }
+  ]
+}

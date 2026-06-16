@@ -1,0 +1,6 @@
+/* Layout & common sections */
+.home-root{min-height:100vh;display:flex;flex-direction:column}
+.top-area{position:relative}
+.page-content{padding:16px 14px 28px}
+.section{margin-bottom:18px}
+.section-title{margin:0 0 12px;font-size:16px;color:var(--dark);font-weight:700}

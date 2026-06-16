@@ -1,0 +1,82 @@
+{
+  "courses": [
+    {
+      "courseId": 3,
+      "posts": [
+        {
+          "id": 1,
+          "courseId": 3,
+          "type": "content",
+          "title": "TAREA DE PICAR MADERA CON EL PENE",
+          "description": "DEBEN MANDAR FOTO DEL PENE",
+          "createdByUserId": 2,
+          "createdAt": "2026-01-14T05:02:01.640Z",
+          "files": [
+            {
+              "id": "f_1768366921638_62fa42e36e21d",
+              "originalName": "WhatsApp Image 2026-01-14 at 12.30.45 AM.jpeg",
+              "storedName": "1768366921629_89e2072646f179aaf5caac281c.jpeg",
+              "mimeType": "image/jpeg",
+              "size": 27608,
+              "url": "/uploads/aulaVirtual/1768366921629_89e2072646f179aaf5caac281c.jpeg",
+              "uploadedAt": "2026-01-14T05:02:01.638Z"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "courseId": 3,
+          "type": "grades",
+          "title": "pronosticos",
+          "description": "NAKSJAKSJK",
+          "createdByUserId": 2,
+          "createdAt": "2026-01-14T05:02:29.342Z",
+          "files": [
+            {
+              "id": "f_1768366949341_2b6512cf83946",
+              "originalName": "analisis predictivo dos.xlsx",
+              "storedName": "1768366949338_9b2f64c6f40d7d78b9a5cbd816.xlsx",
+              "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "size": 23936,
+              "url": "/uploads/aulaVirtual/1768366949338_9b2f64c6f40d7d78b9a5cbd816.xlsx",
+              "uploadedAt": "2026-01-14T05:02:29.341Z"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "courseId": 3,
+          "type": "assignment",
+          "title": "Tarea de prueba",
+          "description": "Sube tu entrega en PDF.",
+          "createdByUserId": 2,
+          "createdAt": "2026-01-14T05:30:39.441Z",
+          "dueAt": "2026-01-15T09:30:00.000Z",
+          "files": []
+        },
+        {
+          "id": 4,
+          "courseId": 3,
+          "type": "assignment",
+          "title": "Tarea de prueba",
+          "description": "Sube tu entrega en PDF.",
+          "createdByUserId": 2,
+          "createdAt": "2026-01-14T05:30:51.242Z",
+          "dueAt": "2026-01-15T09:30:00.000Z",
+          "files": []
+        },
+        {
+          "id": 5,
+          "courseId": 3,
+          "type": "assignment",
+          "title": "Tarea de prueba",
+          "description": "Sube tu entrega en PDF.",
+          "createdByUserId": 2,
+          "createdAt": "2026-01-14T05:32:14.350Z",
+          "dueAt": "2026-01-15T09:32:00.000Z",
+          "files": []
+        }
+      ]
+    }
+  ]
+}

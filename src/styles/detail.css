@@ -1,0 +1,12 @@
+/* Course detail & enroll form */
+.course-detail{display:flex;flex-direction:column;gap:18px}
+.course-detail-card{display:flex;gap:18px;background:var(--card);padding:14px;border-radius:12px;align-items:center}
+.course-detail-img{width:120px;height:120px;border-radius:12px;object-fit:cover}
+.course-detail-meta h1{margin:0;font-size:20px}
+.course-detail-meta .lead{color:var(--muted);margin-top:8px}
+.enroll-form{background:var(--card);padding:12px;border-radius:12px}
+.enroll-form form{display:flex;flex-direction:column;gap:8px}
+.enroll-form input{padding:8px;border-radius:8px;border:1px solid #e6e6e6}
+.toast{margin-top:10px;padding:8px;border-radius:8px}
+.toast.success{background:rgba(40,167,69,0.08);border:1px solid rgba(40,167,69,0.18)}
+.toast.error{background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.12)}

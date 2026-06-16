@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "subject": "Nuevo curso disponible",
+    "text": "Programación Web ahora en inscripciones.",
+    "time": "1h",
+    "read": true
+  },
+  {
+    "id": 2,
+    "subject": "Mensaje del instructor",
+    "text": "Tienes un mensaje de Ana López.",
+    "time": "2d",
+    "read": true
+  },
+  {
+    "id": 3,
+    "subject": "Recordatorio",
+    "text": "Tu curso de Soldadura inicia el lunes.",
+    "time": "3d",
+    "read": true
+  }
+]

@@ -1,0 +1,39 @@
+INCES App - Resumen de preparación
+
+• Entorno:
+  - Backend: Express + JSON local
+  - Frontend: React + Vite
+  - Puerto backend: 3002
+  - Puerto frontend: 5173
+
+• Configuración lista:
+  - `backend/.env` actualizado con valores de desarrollo
+  - `backend/.env.example` actualizado
+  - `USE_PG=false` por defecto para evitar dependencias de PostgreSQL no configurada
+  - Si deseas PostgreSQL, configura `USE_PG=true` y añade `PG_PASS`
+
+• Usuarios y credenciales de prueba:
+  - Master: sachano@gmail.com / Sachano
+  - Admin: admin@inces.gob.ve / Admin123!
+  - Demo: demo@inces.gob.ve / Demo123!
+
+• Mejoras aplicadas:
+  - Middleware `requireAuth` simplificado y más claro
+  - Login sin debug innecesario
+  - Datos de usuario actualizados con contraseñas de prueba seguras
+  - Artículos de texto de prueba eliminados del proyecto raíz
+
+• Archivos eliminados:
+  - database_schema.txt
+  - inces guia.txt
+  - posgrest.txt
+  - status.txt, status2.txt, status2a.txt
+
+• Iniciar proyecto:
+  1) `npm install`
+  2) `npm run dev:all`
+  3) Si prefieres separar: `npm run server` y `npm run dev`
+
+• Notas:
+  - La app funciona con datos JSON locales sin PostgreSQL.
+  - Si configuras PostgreSQL, asegúrate de que el usuario y contraseña coincidan en `backend/.env`.

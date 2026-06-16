@@ -1,0 +1,6 @@
+backend/db/local_users.json
+backend/.env
+node_modules/
+dist/
+/.env
+tests/*.log

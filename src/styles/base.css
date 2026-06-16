@@ -1,0 +1,104 @@
+:root{
+  --bg:#FAF8F6;
+  --main:#F9F9F9;
+  --card:#FFFFFF;
+  --surface: rgba(0,0,0,0.03);
+  --muted:#6b7280;
+  --accent:#c1121f;
+  --accent-600:#a10e1a;
+  --text:#111827;
+  --dark:#111827;
+  --border: rgba(0,0,0,0.06);
+  --glass: rgba(255,255,255,0.95);
+  --sidebar-bg:#FFFFFF;
+}
+[data-theme='dark']{
+  --bg:#0b1020;
+  --main:#0f1220;
+  --card:#141b2c;
+  --surface: rgba(255,255,255,0.06);
+  --muted:#a5afc9;
+  --accent:#c1121f;
+  --accent-600:#a10e1a;
+  --text:#f8f9fb;
+  --dark:#f8f9fb;
+  --border: rgba(255,255,255,0.12);
+  --glass: rgba(255,255,255,0.08);
+  --sidebar-bg:#0f1220;
+}
+*{box-sizing:border-box;font-family: 'Inter', system-ui, Arial, sans-serif}
+html,body,#root{height:100%;background:var(--bg) !important;background-color:var(--bg) !important}
+body{background:var(--bg) !important;color:var(--text) !important;margin:0;padding:0;font-size:14px;transition:background .24s ease,color .24s ease}
+a{color:inherit;text-decoration:none}
+
+.app-shell{background:var(--bg) !important}
+.app-main{background:var(--main) !important}
+
+[data-theme='light'] .app-shell,
+[data-theme='light'] .app-main,
+[data-theme='light'] .sidebar,
+[data-theme='light'] .app-header,
+[data-theme='light'] .app-footer,
+[data-theme='light'] .page-content,
+[data-theme='light'] .courses-panel,
+[data-theme='light'] .grid-card,
+[data-theme='light'] .course-detail-card,
+[data-theme='light'] .modal-card,
+[data-theme='light'] .auth-panel,
+[data-theme='light'] .tabs{
+  background: var(--card) !important;
+  background-color: var(--card) !important;
+  color: var(--text) !important;
+}
+
+[data-theme='light'] .sidebar{background:var(--sidebar-bg) !important}
+
+/* Error Boundary Styles */
+.error-boundary{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  background:var(--bg);
+  padding:20px;
+}
+.error-card{
+  background:var(--card);
+  border-radius:12px;
+  padding:32px;
+  max-width:480px;
+  width:100%;
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  text-align:center;
+}
+.error-icon{
+  font-size:48px;
+  margin-bottom:16px;
+}
+.error-message{
+  color:var(--muted);
+  margin:16px 0 24px;
+}
+.error-actions{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  margin-bottom:24px;
+}
+.error-actions .btn{
+  min-width:140px;
+}
+.error-details{
+  text-align:left;
+  margin-top:24px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.error-details pre{
+  background:rgba(255,255,255,0.05);
+  padding:12px;
+  border-radius:8px;
+  font-size:12px;
+  overflow:auto;
+  max-height:120px;
+}

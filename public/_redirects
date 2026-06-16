@@ -1,0 +1,10 @@
+# Reglas de redirección de Netlify (Proxy API)
+# Si deseas usar Netlify como proxy para evitar configurar CORS en producción:
+# 1. Descomenta la línea de abajo.
+# 2. Reemplaza "https://tu-api.easypanel.host" con la URL real de tu backend en EasyPanel.
+#
+# /api/*  https://tu-api.easypanel.host/api/:splat  200
+
+# Redirección obligatoria para Single Page Applications (React Router)
+# Esto redirige todas las peticiones al index.html para evitar el error 404 al recargar páginas.
+/*  /index.html  200

@@ -1,0 +1,4 @@
+/* Pagination */
+.pagination .btn.small{min-width:36px}
+.pagination{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:18px}
+.page-numbers{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
