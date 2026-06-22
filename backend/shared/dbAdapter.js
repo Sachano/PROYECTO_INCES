@@ -11,15 +11,25 @@ let pool = null
 
 function getPool() {
   if (pool) return pool
-  pool = new Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: Number(process.env.PG_PORT || 5432),
-    user: process.env.PG_USER || 'postgres',
-    password: process.env.PG_PASS || '',
-    database: process.env.PG_DB || 'inces',
-    max: 10,
-    idleTimeoutMillis: 30000
-  })
+  const connectionString = process.env.DATABASE_URL
+  if (connectionString) {
+    pool = new Pool({
+      connectionString,
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+      idleTimeoutMillis: 30000
+    })
+  } else {
+    pool = new Pool({
+      host: process.env.PG_HOST || 'localhost',
+      port: Number(process.env.PG_PORT || 5432),
+      user: process.env.PG_USER || 'postgres',
+      password: process.env.PG_PASS || '',
+      database: process.env.PG_DB || 'inces',
+      max: 10,
+      idleTimeoutMillis: 30000
+    })
+  }
   return pool
 }
 

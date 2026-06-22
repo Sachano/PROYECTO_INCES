@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
+    "start": "node backend/server.js",
     "server": "node backend/server.js",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
     "migrate:pg": "node tools/json_to_pg.mjs",

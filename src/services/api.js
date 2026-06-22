@@ -1,4 +1,4 @@
-const BASE = '/api'
+const BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? '/api' : 'https://inces-api.onrender.com')
 
 // Simple in-memory cache for GET requests
 const apiCache = new Map()

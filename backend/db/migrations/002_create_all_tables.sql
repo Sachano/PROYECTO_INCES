@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS users (
     area TEXT,
     security_questions JSONB DEFAULT '[]',
     avatar_url TEXT DEFAULT '',
+    reset_token TEXT,
+    reset_token_expires TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     last_login_at TIMESTAMP WITH TIME ZONE,

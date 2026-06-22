@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import http from 'http'
 import coursesRouter from './modules/courses/routes.js'
@@ -53,6 +54,21 @@ app.use('/public', express.static(path.join(__dirname, '..', 'public'), {
   maxAge: '1h',
   etag: true
 }))
+
+// Serve built frontend (dist/) if it exists (en Render no hay dist/)
+const distPath = path.join(__dirname, '..', 'dist')
+const distIndex = path.join(distPath, 'index.html')
+if (fs.existsSync(distIndex)) {
+  app.use(express.static(distPath, { maxAge: '1y', etag: true }))
+
+  // SPA fallback: cualquier ruta no-API sirve index.html
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next()
+    res.sendFile(distIndex, (err) => {
+      if (err) next()
+    })
+  })
+}
 
 // Global error handler to avoid raw 500 pages and log unexpected failures
 app.use((err, req, res, next) => {

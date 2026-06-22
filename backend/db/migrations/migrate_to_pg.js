@@ -25,11 +25,13 @@ const { Pool } = 'default' && pkg
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') })
 
-const dbPath = (fileName) => path.join(__dirname, '..', 'db', fileName)
+const dbPath = (fileName) => path.join(__dirname, '..', fileName)
 
 async function readJson(fileName) {
   try {
@@ -42,14 +44,16 @@ async function readJson(fileName) {
 }
 
 async function migrate() {
-  // Configurar conexión a PostgreSQL
-  const pool = new Pool({
-    host: process.env.PG_HOST || 'localhost',
-    port: Number(process.env.PG_PORT || 5432),
-    user: process.env.PG_USER || 'postgres',
-    password: process.env.PG_PASS || '',
-    database: process.env.PG_DB || 'inces',
-  })
+  const connectionString = process.env.DATABASE_URL
+  const pool = connectionString
+    ? new Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+    : new Pool({
+        host: process.env.PG_HOST || 'localhost',
+        port: Number(process.env.PG_PORT || 5432),
+        user: process.env.PG_USER || 'postgres',
+        password: process.env.PG_PASS || '',
+        database: process.env.PG_DB || 'inces',
+      })
 
   try {
     console.log('🚀 Iniciando migración de datos a PostgreSQL...\n')
@@ -66,7 +70,7 @@ async function migrate() {
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
           ON CONFLICT (uuid) DO NOTHING
         `, [
-          user.uuid, user.firstName || user.first_name, user.lastName || user.last_name,
+          user.uuid, user.firstName || user.first_name || '', user.lastName || user.last_name || '',
           user.cedula, user.email, user.phone, user.emergencyPhone || user.emergency_phone,
           user.role || 'estudiante', user.status || 'active', user.passwordHash || user.password_hash,
           user.enrollment, user.location, user.area,
