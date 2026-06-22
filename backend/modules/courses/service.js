@@ -263,3 +263,47 @@ export async function deleteCourse(courseId){
   await writeCourses(items)
   return { ok: true, course: safeCourseBase(removed) }
 }
+
+export async function bulkCreateCourses({ courses, actorRole }){
+  if(!Array.isArray(courses) || courses.length === 0) return { ok: false, error: 'EMPTY_BATCH' }
+  if(courses.length > 50) return { ok: false, error: 'BATCH_TOO_LARGE' }
+  if(actorRole !== 'master') return { ok: false, error: 'FORBIDDEN' }
+
+  const items = await readCourses()
+  let nextId = items.reduce((m, x) => Math.max(m, Number(x.id) || 0), 0) + 1
+  const now = nowIso()
+  const created = []
+
+  for(const raw of courses){
+    const title = String(raw.title || '').trim()
+    const description = String(raw.description || '').trim()
+    const longDescription = String(raw.longDescription || '').trim()
+    const hours = toNumberOrNull(raw.hours)
+    const tag = normalizeTag(raw.tag)
+    const image = String(raw.img || '').trim() || '/assets/course1.svg'
+
+    if(!title) continue
+    if(!description) continue
+    if(!hours) continue
+
+    const course = {
+      id: nextId++,
+      title,
+      author: 'INCES',
+      hours,
+      img: image,
+      tag,
+      description,
+      longDescription: longDescription || description,
+      instructorUserId: null,
+      syllabusUrl: '',
+      createdAt: now,
+      updatedAt: now,
+    }
+    items.push(course)
+    created.push(course)
+  }
+
+  await writeCourses(items)
+  return { ok: true, count: created.length, courses: created }
+}

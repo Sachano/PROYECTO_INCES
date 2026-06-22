@@ -9,7 +9,7 @@ export function UIProvider({ children }){
     if(typeof window === 'undefined') return 'light'
 
     const stored = window.localStorage.getItem('theme')
-    const resolved = stored === 'dark' ? 'light' : 'light'
+    const resolved = stored === 'dark' ? 'dark' : 'light'
     window.localStorage.setItem('theme', resolved)
     document.documentElement.dataset.theme = resolved
     return resolved

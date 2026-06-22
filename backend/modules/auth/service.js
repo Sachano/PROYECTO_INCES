@@ -1,18 +1,22 @@
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import { signToken } from '../../shared/auth.js'
 import { findUserForLogin, toSafeUser, updateUser, createUser as createUserService } from '../users/service.js'
-import { buildResetEmail, buildWelcomeEmail } from './emailTemplate.js'
+import { buildResetEmail, buildWelcomeEmail, buildVerificationEmail } from './emailTemplate.js'
 import { normalizeIdentifier } from '../../../src/shared/utils.js'
 import { generateSecurePassword, generateEnrollment, SECURITY_QUESTIONS, normalizeCedula } from '../../shared/utils.js'
+import { sendEmail } from './mailer.js'
 
 export async function login({ identifier, password }){
   const idKey = normalizeIdentifier(identifier)
   if(!idKey) return { ok: false, error: 'MISSING_IDENTIFIER' }
   if(!password) return { ok: false, error: 'MISSING_PASSWORD' }
 
-  const user = await findUserForLogin(idKey)
+  const sanitized = idKey.replace(/[<>"';&()\\]/g, '')
+  const user = await findUserForLogin(sanitized)
   if(!user) return { ok: false, error: 'INVALID_CREDENTIALS' }
   if(String(user.status || '').toLowerCase() !== 'active') return { ok: false, error: 'USER_INACTIVE' }
+  if(user.emailVerified === false) return { ok: false, error: 'EMAIL_NOT_VERIFIED' }
 
   const passOk = await bcrypt.compare(String(password), String(user.passwordHash || ''))
   if(!passOk) return { ok: false, error: 'INVALID_CREDENTIALS' }
@@ -203,11 +207,78 @@ export async function register({
 
   if (!res.ok) return res
 
+  // Generate email verification token and send email
+  try{
+    const verificationToken = crypto.randomBytes(24).toString('hex')
+    const { readJson, writeJson } = await import('../../shared/jsonDb.js')
+    const users = await readJson('users.json')
+    const idx = users.findIndex(u => String(u.id) === String(res.user.id))
+    if(idx !== -1){
+      users[idx].emailVerificationToken = verificationToken
+      users[idx].emailVerified = false
+      await writeJson('users.json', users)
+    }
+
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+    const verifyLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/verify-email/${verificationToken}`
+    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+
+    await sendEmail({
+      to: email,
+      subject: 'Verifica tu correo electrónico',
+      html: buildVerificationEmail({ logoUrl, verifyLink, userName: firstName }),
+      text: `Confirma tu correo: ${verifyLink}`
+    })
+  }catch(err){
+    console.warn('Could not send verification email:', err)
+  }
+
   return {
     ok: true,
-    message: 'Usuario creado exitosamente. Revisa tu correo para tus credenciales.',
+    message: 'Usuario creado exitosamente. Revisa tu correo para verificar tu cuenta.',
     enrollment: res.user.enrollment
   }
+}
+
+export async function verifyEmail({ token }){
+  if(!token) return { ok: false, error: 'MISSING_TOKEN' }
+  const { readJson, writeJson } = await import('../../shared/jsonDb.js')
+  const users = await readJson('users.json')
+  const idx = users.findIndex(u => u.emailVerificationToken === token)
+  if(idx === -1) return { ok: false, error: 'INVALID_TOKEN' }
+
+  users[idx].emailVerified = true
+  delete users[idx].emailVerificationToken
+  if(users[idx].status === 'inactive') users[idx].status = 'active'
+  await writeJson('users.json', users)
+  return { ok: true }
+}
+
+export async function resendVerification({ email }){
+  if(!email) return { ok: false, error: 'MISSING_EMAIL' }
+  const e = String(email).trim().toLowerCase()
+  const { readJson, writeJson } = await import('../../shared/jsonDb.js')
+  const users = await readJson('users.json')
+  const user = users.find(u => String(u.email || '').trim().toLowerCase() === e)
+  if(!user) return { ok: true } // Don't reveal if email exists
+  if(user.emailVerified) return { ok: false, error: 'ALREADY_VERIFIED' }
+
+  const verificationToken = crypto.randomBytes(24).toString('hex')
+  const idx = users.findIndex(u => String(u.id) === String(user.id))
+  users[idx].emailVerificationToken = verificationToken
+  await writeJson('users.json', users)
+
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+  const verifyLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/verify-email/${verificationToken}`
+  const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+
+  await sendEmail({
+    to: email,
+    subject: 'Verifica tu correo electrónico',
+    html: buildVerificationEmail({ logoUrl, verifyLink, userName: user.firstName }),
+    text: `Confirma tu correo: ${verifyLink}`
+  })
+  return { ok: true }
 }
 
 export async function createUserFromAdmin(payload){

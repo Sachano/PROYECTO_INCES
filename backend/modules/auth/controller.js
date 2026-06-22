@@ -1,4 +1,4 @@
-import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc, checkDuplicate as checkDuplicateSvc } from './service.js'
+import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc, checkDuplicate as checkDuplicateSvc, verifyEmail as verifyEmailSvc, resendVerification as resendVerificationSvc } from './service.js'
 
 export async function login(req, res){
   const { identifier, password } = req.body || {}
@@ -84,4 +84,18 @@ export async function checkDuplicate(req, res){
   
   const result = await checkDuplicateSvc({ field, value })
   return res.json({ exists: result.exists })
+}
+
+export async function verifyEmail(req, res){
+  const { token } = req.params
+  const result = await verifyEmailSvc({ token })
+  if(!result.ok) return res.status(400).json({ error: result.error })
+  res.json({ ok: true })
+}
+
+export async function resendVerification(req, res){
+  const { email } = req.body || {}
+  const result = await resendVerificationSvc({ email })
+  if(!result.ok) return res.status(400).json({ error: result.error })
+  res.json({ ok: true })
 }

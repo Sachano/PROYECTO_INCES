@@ -13,11 +13,25 @@ export default function LoginPage(){
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [passwordWarn, setPasswordWarn] = useState('')
+
+  const BLOCKED_PASSWORD_CHARS = /[<>"'\\;)(]/
 
   // use shared sanitize helper
 
+  function handlePasswordChange(e){
+    const val = e.target.value
+    if(BLOCKED_PASSWORD_CHARS.test(val)){
+      setPasswordWarn('Caracteres no permitidos: < > " \' \\ ; ( )')
+      return
+    }
+    setPasswordWarn('')
+    setPassword(val)
+  }
+
   function handleIdentifierChange(e){
     const clean = sanitizeIdentifierInput(e.target.value)
+    if(isLikelyCedula(clean) && clean.replace(/[^0-9]/g,'').length > 9) return
     setIdentifier(clean)
   }
 
@@ -89,9 +103,10 @@ export default function LoginPage(){
               className="input"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Contraseña"
             />
+            {passwordWarn && <div className="field-warn" style={{fontSize:12,color:'var(--accent)',marginTop:4}}>{passwordWarn}</div>}
           </div>
 
           {error && <div className="form-error">{error}</div>}

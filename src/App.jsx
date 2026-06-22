@@ -10,6 +10,7 @@ import ErrorBoundary from './shared/components/ErrorBoundary.jsx'
 const RegisterPage = lazy(() => import('./modules/auth/pages/RegisterPage.jsx'))
 const ForgotPasswordPage = lazy(() => import('./modules/auth/pages/ForgotPasswordPage.jsx'))
 const ResetPasswordPage = lazy(() => import('./modules/auth/pages/ResetPasswordPage.jsx'))
+const VerifyEmailPage = lazy(() => import('./modules/auth/pages/VerifyEmailPage.jsx'))
 const Home = lazy(() => import('./modules/home/pages/HomePage.jsx'))
 const Cursos = lazy(() => import('./modules/courses/pages/CoursesPage.jsx'))
 const Perfil = lazy(() => import('./modules/profile/pages/ProfilePage.jsx'))
@@ -51,6 +52,7 @@ export default function App(){
               <Route path="/auth/register" element={<RegisterPage />} />
               <Route path="/auth/forgot" element={<ForgotPasswordPage />} />
               <Route path="/auth/reset/:token" element={<ResetPasswordPage />} />
+              <Route path="/auth/verify-email/:token" element={<VerifyEmailPage />} />
 
               <Route element={<RequireAuth />}>
                 <Route element={<Layout />}>

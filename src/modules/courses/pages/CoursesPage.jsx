@@ -8,6 +8,7 @@ import { useCourses } from '../hooks/useCourses.js'
 import { filterCourses, paginate } from '../utils/coursesUtils.js'
 import { useAuth } from '../../auth/context/AuthContext.jsx'
 import CourseUpsertModal from '../components/CourseUpsertModal.jsx'
+import BulkCourseModal from '../components/BulkCourseModal.jsx'
 import { IoSearchOutline, IoLibraryOutline } from 'react-icons/io5'
 
 export default function Cursos(){
@@ -19,6 +20,7 @@ export default function Cursos(){
   const [detailsCourse, setDetailsCourse] = useState(null)
   const [enrollCourse, setEnrollCourse] = useState(null)
   const [createOpen, setCreateOpen] = useState(false)
+  const [bulkOpen, setBulkOpen] = useState(false)
   const PAGE_SIZE = 6
 
   const filtered = useMemo(() => {
@@ -98,6 +100,11 @@ export default function Cursos(){
               <button className="btn primary" type="button" onClick={() => setCreateOpen(true)}>
                 Crear curso
               </button>
+              {user?.role === 'master' && (
+                <button className="btn" type="button" onClick={() => setBulkOpen(true)} style={{marginLeft:8}}>
+                  Carga masiva
+                </button>
+              )}
             </div>
           )}
         </section>
@@ -173,6 +180,12 @@ export default function Cursos(){
           await reload()
         }}
       />
+      {bulkOpen && <BulkCourseModal
+        onClose={() => setBulkOpen(false)}
+        onCreated={async () => {
+          await reload()
+        }}
+      />}
     </>
   )
 }

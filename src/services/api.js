@@ -139,6 +139,7 @@ export const api = {
     },
     get: async (id) => http('GET', `/courses/${id}`, null, true),
     create: async (data) => http('POST', '/courses', data),
+    bulkCreate: async (courses) => http('POST', '/courses/bulk', { courses }),
     setInstructor: async (courseId, instructorUserId) => http('PUT', `/courses/${courseId}/instructor`, { instructorUserId }),
     uploadImage: async (file) => {
       const token = getToken()

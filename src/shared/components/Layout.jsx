@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar.jsx'
+import BottomNav from './BottomNav.jsx'
 import Footer from './Footer.jsx'
 import { UIProvider, useUI } from '../context/UIContext.jsx'
 import ChatbotButton from '../../modules/chatbot/components/ChatbotButton.jsx'
@@ -19,6 +20,7 @@ function Shell({ children }){
       <div className="app-main">
         {children ?? <Outlet />}
       </div>
+      <BottomNav />
       <ChatbotButton />
     </div>
   )

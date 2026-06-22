@@ -57,3 +57,14 @@ export async function deleteCourse(req, res){
   if(!result.ok) return res.status(404).json({ error: result.error })
   res.json({ ok: true })
 }
+
+export async function bulkCreateCourses(req, res){
+  const { courses } = req.body || {}
+  const actorRole = req.auth && req.auth.role
+  const result = await service.bulkCreateCourses({ courses, actorRole })
+  if(!result.ok){
+    if(result.error === 'FORBIDDEN') return res.status(403).json({ error: result.error })
+    return res.status(400).json({ error: result.error })
+  }
+  res.status(201).json({ ok: true, count: result.count })
+}

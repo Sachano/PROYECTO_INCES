@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createCourse, getAllCourses, getCourseById, setCourseInstructor, uploadCourseImage, updateCourse, deleteCourse } from './controller.js'
+import { createCourse, getAllCourses, getCourseById, setCourseInstructor, uploadCourseImage, updateCourse, deleteCourse, bulkCreateCourses } from './controller.js'
 import { requireAuth, requireRole } from '../../shared/auth.js'
 import { uploadImageFile } from './upload.js'
 
@@ -10,6 +10,7 @@ router.use(requireAuth)
 router.get('/', getAllCourses)
 router.get('/:id', getCourseById)
 
+router.post('/bulk', requireRole(['master']), bulkCreateCourses)
 router.post('/upload-image', requireRole(['master']), uploadImageFile, uploadCourseImage)
 router.post('/', requireRole(['master']), createCourse)
 router.put('/:id/instructor', requireRole(['master']), setCourseInstructor)
