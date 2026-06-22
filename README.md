@@ -2,13 +2,21 @@
 
 Aplicación web completa para la gestión de cursos, usuarios, aula virtual, notificaciones y panel administrativo del INCES.
 
-## Stack Tecnológico
+## 🌐 Producción
+
+| Servicio | URL | Estado |
+|----------|-----|--------|
+| **App** | [https://inces-api.onrender.com](https://inces-api.onrender.com) | ✅ Activo |
+| **API Health** | [https://inces-api.onrender.com/api/health](https://inces-api.onrender.com/api/health) | ✅ `{"ok":true}` |
+| **Base de datos** | Neon PostgreSQL | ✅ Conectado |
+
+### Stack Tecnológico
 
 - **Frontend:** React 18 + Vite, React Router, React Icons
-- **Backend:** Express.js (API REST)
-- **Base de datos:** JSON files (desarrollo) / PostgreSQL (producción)
+- **Backend:** Express.js (API REST) — desplegado en Render
+- **Base de datos:** Neon PostgreSQL (producción) / JSON files (desarrollo)
 - **Seguridad:** bcrypt (hashing), express-rate-limit, JWT
-- **Email:** Nodemailer (Ethereal fallback para desarrollo)
+- **Email:** Nodemailer (SMTP Gmail)
 
 ## Estructura del Proyecto
 
@@ -213,29 +221,25 @@ GET    /api/docs/openapi.json
 ## Variables de Entorno
 
 ```env
-# Backend (.env)
-PORT=3001
+# Backend (.env) — Desarrollo local
+PORT=3002
+USE_PG=false
 JWT_SECRET=tu-secreto-jwt
 FRONTEND_URL=http://localhost:5173
 
-# Opcional - Email SMTP
+# Producción (configurar en Render dashboard)
+USE_PG=true
+DATABASE_URL=postgresql://...
+JWT_SECRET=<secure-random-string>
+FRONTEND_URL=https://inces-api.onrender.com
+
+# Email SMTP
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=tu-email@gmail.com
 SMTP_PASS=tu-contraseña
 EMAIL_FROM=INCES <no-reply@inces.gob.ve>
-
-# Opcional - PostgreSQL
-USE_PG=false
-PG_HOST=localhost
-PG_PORT=5432
-PG_USER=postgres
-PG_PASS=
-PG_DB=inces
-
-# Opcional - 2FA
-TOTP_ISSUER=INCES
 ```
 
 ## Comandos Disponibles
