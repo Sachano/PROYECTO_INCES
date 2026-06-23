@@ -17,7 +17,7 @@ import {
 
 export default function Sidebar(){
   const { user, logout } = useAuth()
-  const { sidebarOpen, sidebarCollapsed, closeSidebar } = useUI()
+  const { sidebarOpen, sidebarCollapsed, closeSidebar, openSidebar, toggleSidebarCollapsed } = useUI()
 
   function navClass({ isActive }){
     return isActive ? 'nav-item active' : 'nav-item'
