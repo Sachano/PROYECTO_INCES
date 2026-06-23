@@ -11,7 +11,7 @@ export default function VerifyEmailPage(){
       setStatus('error')
       return
     }
-    fetch(`${import.meta.env.VITE_API_BASE || '/api'}/auth/verify-email/${token}`)
+    fetch(`/api/auth/verify-email/${token}`)
       .then(r => r.json())
       .then(data => setStatus(data.ok ? 'success' : 'error'))
       .catch(() => setStatus('error'))
