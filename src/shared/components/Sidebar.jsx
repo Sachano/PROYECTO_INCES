@@ -25,9 +25,8 @@ export default function Sidebar(){
     <aside className={sidebarOpen ? (sidebarCollapsed ? 'sidebar open collapsed' : 'sidebar open') : (sidebarCollapsed ? 'sidebar collapsed' : 'sidebar')}>
       <div className="brand">
         <div className="brand-mark">
-          {sidebarCollapsed ? 'I' : <img src="/assets/logo-small.svg" alt="INCES" style={{ height: 34 }} />}
+          {sidebarCollapsed ? '' : <img src="/assets/logo-small.svg" alt="INCES" style={{ height: 34 }} />}
         </div>
-        <div className="brand-chip">INCES</div>
       </div>
       <nav className="nav">
         <NavLink to="/" className={navClass} end onClick={closeSidebar} title="Home">
