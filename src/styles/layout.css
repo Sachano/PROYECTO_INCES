@@ -4,3 +4,45 @@
 .page-content{padding:16px 14px 28px}
 .section{margin-bottom:18px}
 .section-title{margin:0 0 12px;font-size:16px;color:var(--dark);font-weight:700}
+
+/* Transition for main content when sidebar collapses */
+.app-main{transition:margin-left var(--transition-md);min-width:0}
+
+/* Responsive: >= 861px sidebar colapsado */
+@media (min-width: 861px){
+  .sidebar.collapsed + .app-main,
+  .sidebar.collapsed ~ .app-main{width:100%}
+}
+
+/* Responsive: tablets vertical y móviles */
+@media (max-width: 860px){
+  .page-content{padding:12px 10px 80px}
+  .section-title{font-size:var(--text-md)}
+  .hero-content h2{font-size:var(--text-3xl)}
+  .hero-content p{font-size:var(--text-base)}
+}
+
+@media (max-width: 480px){
+  .page-content{padding:10px 8px 80px}
+  .section{margin-bottom:14px}
+  .grid-list{grid-template-columns:1fr}
+  .section-title{font-size:var(--text-md)}
+}
+
+/* Tablas responsivas: convertir a cards en móvil */
+@media (max-width: 768px){
+  .users-table,
+  .vc-students-table{min-width:unset;width:100%}
+  .users-table thead,
+  .vc-students-table thead{display:none}
+  .users-table tr,
+  .vc-students-table tr{display:flex;flex-direction:column;padding:var(--space-md);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:var(--space-sm)}
+  .users-table td,
+  .vc-students-table td{padding:var(--space-xs) 0}
+  .users-table td::before,
+  .vc-students-table td::before{content:attr(data-label);display:block;font-size:var(--text-xs);color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:2px}
+}
+
+/* Sidebar backdrop for mobile */
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);z-index:29}
+.sidebar-backdrop.open{display:block}@media (min-width:861px){.sidebar-backdrop.open{display:none}}

@@ -17,12 +17,20 @@
 
 .sidebar-backdrop{display:none}
 
+/* Collapse toggle button */
+.sidebar-collapse-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:14px;flex-shrink:0;transition:all var(--transition-fast)}
+.sidebar-collapse-btn:hover{background:rgba(193,18,31,0.10);color:var(--accent);border-color:rgba(193,18,31,0.20)}
+
+/* Mobile hamburger (hidden on desktop) */
+.sidebar-mobile-toggle{display:none}
+
 /* Collapsed sidebar (desktop): icon-only vertical bar */
 @media (min-width: 861px){
   .sidebar.collapsed{width:56px;flex:0 0 56px;min-width:56px;max-width:56px;overflow:hidden;padding:10px 0;background:transparent;border-right:0}
-  .sidebar.collapsed .brand{display:none}
+  .sidebar.collapsed .brand{display:flex;justify-content:center;padding:0 4px}
+  .sidebar.collapsed .brand-mark{display:none}
   .sidebar.collapsed .brand-chip{display:none}
-  .sidebar.collapsed .brand-mark{letter-spacing:0;font-size:16px}
+  .sidebar.collapsed .sidebar-collapse-btn{transform:rotate(180deg)}
   .sidebar.collapsed .nav-item{justify-content:center;padding:10px 0}
   .sidebar.collapsed .nav-item .nav-label{display:none}
   .sidebar.collapsed .role-chip{display:none}
@@ -30,6 +38,11 @@
   .sidebar.collapsed .sidebar-footer{padding:8px 0}
   .sidebar.collapsed .btn{justify-content:center;padding:10px 0}
   .sidebar.collapsed .btn .nav-label{display:none}
+}
+
+@media (max-width: 860px){
+  .sidebar-collapse-btn{display:none}
+  .sidebar-mobile-toggle{display:flex;position:fixed;top:12px;left:12px;z-index:50;width:40px;height:40px;border-radius:var(--radius-lg);background:var(--card);border:1px solid var(--border);align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:22px;box-shadow:var(--shadow-sm)}
 }
 
 @media (max-width: 860px){

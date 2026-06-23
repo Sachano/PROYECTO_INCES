@@ -89,6 +89,8 @@ export default function LoginPage(){
               onChange={handleIdentifierChange}
               placeholder="Correo o cédula"
               autoFocus
+              maxLength={50}
+              aria-label="Correo o cédula"
             />
             {idType && (
               <div className={`id-badge ${idType === 'email' ? 'badge-email' : 'badge-cedula'}`}>

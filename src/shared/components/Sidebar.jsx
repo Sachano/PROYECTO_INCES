@@ -11,6 +11,8 @@ import {
   IoPeopleOutline,
   IoLogOutOutline,
   IoShieldCheckmarkOutline,
+  IoMenuOutline,
+  IoChevronBackOutline,
 } from 'react-icons/io5'
 
 export default function Sidebar(){
@@ -27,7 +29,19 @@ export default function Sidebar(){
         <div className="brand-mark">
           {sidebarCollapsed ? '' : <img src="/assets/logo-small.svg" alt="INCES" style={{ height: 34 }} />}
         </div>
+        <button
+          className="sidebar-collapse-btn"
+          onClick={toggleSidebarCollapsed}
+          title={sidebarCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+          type="button"
+          aria-label="toggle sidebar"
+        >
+          <IoChevronBackOutline />
+        </button>
       </div>
+      <button className="sidebar-mobile-toggle" onClick={openSidebar} type="button" aria-label="Open menu">
+        <IoMenuOutline />
+      </button>
       <nav className="nav">
         <NavLink to="/" className={navClass} end onClick={closeSidebar} title="Home">
           <span className="nav-ico"><IoHomeOutline /></span> <span className="nav-label">Home</span>

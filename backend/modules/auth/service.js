@@ -8,11 +8,14 @@ import { generateSecurePassword, generateEnrollment, SECURITY_QUESTIONS, normali
 import { sendEmail } from './mailer.js'
 
 export async function login({ identifier, password }){
-  const idKey = normalizeIdentifier(identifier)
+  if(!identifier || !password) return { ok: false, error: 'MISSING_DATA' }
+  const idKey = normalizeIdentifier(String(identifier))
   if(!idKey) return { ok: false, error: 'MISSING_IDENTIFIER' }
   if(!password) return { ok: false, error: 'MISSING_PASSWORD' }
 
-  const sanitized = idKey.replace(/[<>"';&()\\]/g, '')
+  // Sanitize: remove XSS/SQL injection characters, strip anything non-alphanumeric except @ . - _
+  const sanitized = String(idKey).replace(/[<>"';&()\\]/g, '').replace(/[\x00-\x1f]/g, '').trim()
+  if(!sanitized) return { ok: false, error: 'INVALID_INPUT' }
   const user = await findUserForLogin(sanitized)
   if(!user) return { ok: false, error: 'INVALID_CREDENTIALS' }
   if(String(user.status || '').toLowerCase() !== 'active') return { ok: false, error: 'USER_INACTIVE' }
@@ -208,6 +211,7 @@ export async function register({
   if (!res.ok) return res
 
   // Generate email verification token and send email
+  // Set user as inactive until email is verified
   try{
     const verificationToken = crypto.randomBytes(24).toString('hex')
     const { readJson, writeJson } = await import('../../shared/jsonDb.js')
@@ -216,6 +220,7 @@ export async function register({
     if(idx !== -1){
       users[idx].emailVerificationToken = verificationToken
       users[idx].emailVerified = false
+      users[idx].status = 'inactive'
       await writeJson('users.json', users)
     }
 

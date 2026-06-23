@@ -56,7 +56,9 @@ export async function createUser(userData){
     emergencyPhone = '',
     role = 'estudiante',
     location = '',
-    area = ''
+    area = '',
+    password: userProvidedPassword,
+    securityQuestions: userSecurityQuestions,
   } = userData
 
   // Validaciones alineadas con el flujo de registro público (robusto y consistente)
@@ -83,20 +85,22 @@ export async function createUser(userData){
 
   const id = Math.max(...users.map(u => u.id), 0) + 1
   const uuid = `usr_${role}_${id}_${Date.now()}`
-  
-  // Contraseña temporal segura (ya no usamos 'Temp123!' — alineado con registro público)
-  const tempPassword = generateSecurePassword(12)
-  console.log('DEBUG users.createUser - generated tempPassword length:', tempPassword ? tempPassword.length : 0)
-  const passwordHash = await bcrypt.hash(tempPassword, 10)
   const now = new Date().toISOString()
+
+  // Determinar contraseña:
+  // - Si el usuario proporcionó una, usarla (registro público)
+  // - Si no, generar una temporal (creación por admin)
+  const useProvidedPassword = Boolean(userProvidedPassword && String(userProvidedPassword).length >= 8)
+  const finalPassword = useProvidedPassword ? String(userProvidedPassword) : generateSecurePassword(12)
+  const passwordHash = await bcrypt.hash(finalPassword, 10)
 
   const enrollment = (location && area) ? generateEnrollment(String(location).toUpperCase().trim(), String(area).toUpperCase().trim()) : ''
 
   // Process security questions: if present, store hashed answers for safety
   let processedSecurityQuestions = []
-  if (Array.isArray(userData.securityQuestions) && userData.securityQuestions.length) {
+  if (Array.isArray(userSecurityQuestions) && userSecurityQuestions.length) {
     const bcrypt = await import('bcryptjs')
-    for (const sq of userData.securityQuestions) {
+    for (const sq of userSecurityQuestions) {
       const q = String(sq.question || '').trim()
       const answer = String(sq.answer || '').trim()
       if (!q || !answer) continue
@@ -118,7 +122,7 @@ export async function createUser(userData){
     role: normalizeRole(role),
     status: 'active',
     passwordHash,
-    mustChangePassword: true, // for security: force password reset on first login
+    mustChangePassword: !useProvidedPassword,
     enrollment,
     location: String(location).toUpperCase().trim(),
     area: String(area).toUpperCase().trim(),
@@ -133,64 +137,65 @@ export async function createUser(userData){
   users.push(newUser)
   await writeJson(FILE, users)
 
-  // Enviar email de bienvenida (intento; no bloquear la respuesta si falla)
-  try {
-    const nodemailer = await import('nodemailer')
-    const { buildWelcomeEmail } = await import('../auth/emailTemplate.js')
+  // Solo enviar email de bienvenida si fue creado por admin (tiene contraseña temporal)
+  if (!useProvidedPassword) {
+    try {
+      const nodemailer = await import('nodemailer')
+      const { buildWelcomeEmail } = await import('../auth/emailTemplate.js')
 
-    const SMTP_HOST = process.env.SMTP_HOST || ''
-    const SMTP_PORT = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined
-    const SMTP_SECURE = process.env.SMTP_SECURE === 'true'
-    const SMTP_USER = process.env.SMTP_USER || ''
-    const SMTP_PASS = process.env.SMTP_PASS || ''
-    const EMAIL_FROM = process.env.EMAIL_FROM || 'INCES <no-reply@inces.local>'
-    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+      const SMTP_HOST = process.env.SMTP_HOST || ''
+      const SMTP_PORT = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined
+      const SMTP_SECURE = process.env.SMTP_SECURE === 'true'
+      const SMTP_USER = process.env.SMTP_USER || ''
+      const SMTP_PASS = process.env.SMTP_PASS || ''
+      const EMAIL_FROM = process.env.EMAIL_FROM || 'INCES <no-reply@inces.local>'
+      const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
 
-    let transporter
-    if (SMTP_HOST && SMTP_USER) {
-      transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT || 587,
-        secure: SMTP_SECURE || false,
-        auth: { user: SMTP_USER, pass: SMTP_PASS }
+      let transporter
+      if (SMTP_HOST && SMTP_USER) {
+        transporter = nodemailer.createTransport({
+          host: SMTP_HOST,
+          port: SMTP_PORT || 587,
+          secure: SMTP_SECURE || false,
+          auth: { user: SMTP_USER, pass: SMTP_PASS }
+        })
+      } else {
+        const testAccount = await nodemailer.createTestAccount()
+        transporter = nodemailer.createTransport({
+          host: testAccount.smtp.host,
+          port: testAccount.smtp.port,
+          secure: testAccount.smtp.secure,
+          auth: { user: testAccount.user, pass: testAccount.pass }
+        })
+      }
+
+      const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+      const html = buildWelcomeEmail({
+        logoUrl,
+        userName: firstName,
+        email: emailNorm,
+        password: finalPassword,
+        enrollment
       })
-    } else {
-      const testAccount = await nodemailer.createTestAccount()
-      transporter = nodemailer.createTransport({
-        host: testAccount.smtp.host,
-        port: testAccount.smtp.port,
-        secure: testAccount.smtp.secure,
-        auth: { user: testAccount.user, pass: testAccount.pass }
+
+      const info = await transporter.sendMail({
+        from: EMAIL_FROM,
+        to: emailNorm,
+        subject: 'Bienvenido al INCES - Tus credenciales de acceso',
+        html
       })
+
+      const preview = nodemailer.getTestMessageUrl ? nodemailer.getTestMessageUrl(info) : null
+      console.log('Welcome email sent (users.create). Preview:', preview || 'N/A')
+    } catch (err) {
+      console.log('Failed to send welcome email (users.create):', err)
     }
-
-    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
-    const html = buildWelcomeEmail({
-      logoUrl,
-      userName: firstName,
-      email: emailNorm,
-      password: tempPassword,
-      enrollment
-    })
-
-    const info = await transporter.sendMail({
-      from: EMAIL_FROM,
-      to: emailNorm,
-      subject: 'Bienvenido al INCES - Tus credenciales de acceso',
-      html
-    })
-
-    const preview = nodemailer.getTestMessageUrl ? nodemailer.getTestMessageUrl(info) : null
-    console.log('Welcome email sent (users.create). Preview:', preview || 'N/A')
-  } catch (err) {
-    console.log('Failed to send welcome email (users.create):', err)
   }
 
   return { 
     ok: true, 
     user: safeUser(newUser),
-    // Devolvemos la contraseña temporal para que el frontend pueda mostrarla o enviarla por email si se desea
-    tempPassword 
+    tempPassword: useProvidedPassword ? null : finalPassword
   }
 }
 
