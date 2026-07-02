@@ -151,6 +151,8 @@ async function http(method, url, data, useCache = false){
 }
 
 export const api = {
+  get: async (url, useCache = false) => http('GET', url, null, useCache),
+  post: async (url, data) => http('POST', url, data),
   auth: {
     login: async ({ identifier, password }) => http('POST', '/auth/login', { identifier, password }),
     me: async () => http('GET', '/auth/me', null, true),
