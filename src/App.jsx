@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react'
+import React, { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './shared/components/Layout.jsx'
 import { AuthProvider } from './modules/auth/context/AuthContext.jsx'
@@ -6,6 +6,20 @@ import RequireAuth from './modules/auth/components/RequireAuth.jsx'
 import RequireRole from './modules/auth/components/RequireRole.jsx'
 import LoginPage from './modules/auth/pages/LoginPage.jsx'
 import ErrorBoundary from './shared/components/ErrorBoundary.jsx'
+
+// Keep-alive: pings the backend every 5 min to prevent cold starts on Render free tier
+const KEEPALIVE_INTERVAL = 5 * 60 * 1000
+function useKeepAlive(){
+  useEffect(() => {
+    let mounted = true
+    async function ping(){
+      try{ await fetch('/api/health', { method: 'GET' }) }catch{ /* ignore */ }
+    }
+    ping()
+    const id = setInterval(() => { if(mounted) ping() }, KEEPALIVE_INTERVAL)
+    return () => { mounted = false; clearInterval(id) }
+  }, [])
+}
 
 const RegisterPage = lazy(() => import('./modules/auth/pages/RegisterPage.jsx'))
 const ForgotPasswordPage = lazy(() => import('./modules/auth/pages/ForgotPasswordPage.jsx'))
@@ -42,6 +56,7 @@ function LoadingFallback(){
 }
 
 export default function App(){
+  useKeepAlive()
   return (
     <BrowserRouter>
       <AuthProvider>

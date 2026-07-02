@@ -44,7 +44,7 @@ const AREAS = [
 
 export default function LocationAreaSection({ location, area, onChange, errors }) {
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div className="form-section" style={{ marginBottom: '20px' }}>
       <h3 style={{ fontSize: '14px', color: '#1a1a2e', marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
         Centro de Estudios
       </h3>

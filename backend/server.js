@@ -27,6 +27,25 @@ app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
+// Request timeout middleware to prevent hanging requests (504 prevention)
+const REQUEST_TIMEOUT = 25000 // 25 seconds
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    req.setTimeout(REQUEST_TIMEOUT, () => {
+      const err = new Error('Request Timeout')
+      err.status = 504
+      err.statusText = 'Gateway Timeout'
+      next(err)
+    })
+    res.setTimeout(REQUEST_TIMEOUT, () => {
+      if (!res.headersSent) {
+        res.status(504).json({ error: 'SERVER_TIMEOUT', message: 'El servidor tardó demasiado en responder. Intenta de nuevo.' })
+      }
+    })
+  }
+  next()
+})
+
 // API Routes
 app.get('/api/health', (req, res) => res.json({ ok: true }))
 
@@ -55,16 +74,39 @@ app.use('/public', express.static(path.join(__dirname, '..', 'public'), {
   etag: true
 }))
 
-// Serve built frontend (dist/) if it exists (en Render no hay dist/)
+// Serve built frontend (dist/) if it exists
 const distPath = path.join(__dirname, '..', 'dist')
 const distIndex = path.join(distPath, 'index.html')
 if (fs.existsSync(distIndex)) {
-  app.use(express.static(distPath, { maxAge: '1y', etag: true }))
+  // Assets (JS/CSS with hash in filename) can be cached long-term
+  app.use('/assets', express.static(path.join(distPath, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }))
+
+  // index.html NEVER cached — always serve fresh so new builds are picked up
+  app.use(express.static(distPath, {
+    setHeaders(res, filePath) {
+      if (filePath === distIndex || filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+        res.setHeader('Pragma', 'no-cache')
+        res.setHeader('Expires', '0')
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=86400')
+      }
+    }
+  }))
 
   // SPA fallback: cualquier ruta no-API sirve index.html
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next()
-    res.sendFile(distIndex, (err) => {
+    res.sendFile(distIndex, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    }, (err) => {
       if (err) next()
     })
   })
@@ -72,8 +114,17 @@ if (fs.existsSync(distIndex)) {
 
 // Global error handler to avoid raw 500 pages and log unexpected failures
 app.use((err, req, res, next) => {
-  console.error('Unhandled server error:', err)
-  res.status(500).json({ error: 'SERVER_ERROR', message: err?.message || 'Internal server error' })
+  const status = err?.status || err?.statusCode || 500
+  const errorCode = status === 504 ? 'SERVER_TIMEOUT' : 'SERVER_ERROR'
+  const message = err?.message || (status === 504 ? 'El servidor tardó demasiado en responder. Intenta de nuevo.' : 'Internal server error')
+  if (status === 504) {
+    console.warn('Request timeout:', req.method, req.path)
+  } else {
+    console.error('Unhandled server error:', err)
+  }
+  if (!res.headersSent) {
+    res.status(status).json({ error: errorCode, message })
+  }
 })
 
 const PORT = Number(process.env.PORT) || 3001
@@ -110,6 +161,10 @@ function listen(port){
     console.error('Backend failed to start:', err)
     process.exit(1)
   })
+
+  server.timeout = 30000 // 30 seconds global timeout
+  server.keepAliveTimeout = 15000
+  server.headersTimeout = 35000
 
   server.listen(port, () => {
     console.log(`Backend running on http://localhost:${port}`)

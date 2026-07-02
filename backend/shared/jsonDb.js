@@ -7,7 +7,8 @@ const __dirname = path.dirname(__filename)
 
 // In-memory cache for JSON files (improves performance significantly)
 const cache = new Map()
-const CACHE_TTL = 30000 // 30 seconds TTL for cache entries
+const CACHE_TTL = 60000 // 60 seconds TTL for cache entries (was 30s)
+const HIGH_FREQ_CACHE_TTL = 120000 // 2 min for rarely-changed files like courses
 
 function dbPath(fileName){
   return path.join(__dirname, '..', 'db', fileName)
@@ -18,8 +19,11 @@ function getCached(fileName){
   const entry = cache.get(fileName)
   if(!entry) return null
   
+  // Different TTL for different file types
+  const ttl = fileName === 'users.json' ? CACHE_TTL : HIGH_FREQ_CACHE_TTL
+  
   // Check if cache has expired
-  if(Date.now() - entry.timestamp > CACHE_TTL){
+  if(Date.now() - entry.timestamp > ttl){
     cache.delete(fileName)
     return null
   }

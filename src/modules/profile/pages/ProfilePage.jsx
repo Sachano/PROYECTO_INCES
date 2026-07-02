@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import Header from '../../../shared/components/Header.jsx'
 import { api } from '../../../services/api.js'
 import { getCharCountDisplay, validateField, VALIDATION_RULES } from '../../../shared/utils'
@@ -7,10 +7,13 @@ export default function Perfil(){
   const [form, setForm] = useState({name:'', username:'', email:'', bio:'', avatarUrl:''})
   const [saving, setSaving] = useState(false)
   const [fieldErrors, setFieldErrors] = useState({ name: '', username: '', email: '', bio: '' })
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const fileInputRef = useRef(null)
 
   function handleChange(field, value) {
     setForm(prev => ({ ...prev, [field]: value }))
-    // Validate
     let fieldName = field
     if (field === 'username') fieldName = 'userName'
     if (field === 'email') fieldName = 'userEmail'
@@ -37,13 +40,78 @@ export default function Perfil(){
     alert('Perfil guardado')
   }
 
+  function handleAvatarChange(e){
+    const file = e.target.files[0]
+    if (!file) return
+    setAvatarFile(file)
+    setAvatarPreview(URL.createObjectURL(file))
+  }
+
+  async function handleAvatarUpload(){
+    if (!avatarFile) return
+    setUploadingAvatar(true)
+    try {
+      const result = await api.profile.uploadAvatar(avatarFile)
+      if (result.avatarUrl) {
+        setForm(prev => ({ ...prev, avatarUrl: result.avatarUrl }))
+        setAvatarPreview(null)
+        setAvatarFile(null)
+      }
+    } catch (err) {
+      alert('Error al subir la foto')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
   return (
     <>
       <Header />
       <main className="page-content">
         <h2>Mi Perfil</h2>
         <div className="profile-header">
-          <div className="avatar-circle">{form.name ? form.name[0] : 'U'}</div>
+          <div className="avatar-wrapper">
+            <div
+              className="avatar-circle"
+              onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+            >
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Preview" className="avatar-img" />
+              ) : form.avatarUrl ? (
+                <img src={form.avatarUrl} alt="Avatar" className="avatar-img" />
+              ) : (
+                form.name ? form.name[0] : 'U'
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              className="avatar-input"
+              onChange={handleAvatarChange}
+            />
+            <button
+              className="avatar-upload-btn"
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="Cambiar foto"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+          </div>
+          {avatarFile && (
+            <div className="avatar-actions">
+              <button className="btn primary small" type="button" onClick={handleAvatarUpload} disabled={uploadingAvatar}>
+                {uploadingAvatar ? 'Subiendo...' : 'Guardar foto'}
+              </button>
+              <button className="btn ghost small" type="button" onClick={() => { setAvatarFile(null); setAvatarPreview(null); if(fileInputRef.current) fileInputRef.current.value = '' }}>
+                Cancelar
+              </button>
+            </div>
+          )}
           <div className="profile-stats">
             <div><strong>128</strong><span>Seguidores</span></div>
             <div><strong>56</strong><span>Siguiendo</span></div>

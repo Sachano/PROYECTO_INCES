@@ -16,11 +16,11 @@ export async function getProfile(){
 export async function updateProfile(patch){
   const { name, username, email, bio } = patch
 
-  // Length validations
-  if (name && name.length > 60) return { ok: false, error: 'NAME_TOO_LONG' }
-  if (username && username.length > 25) return { ok: false, error: 'USERNAME_TOO_LONG' }
-  if (email && email.length > 50) return { ok: false, error: 'EMAIL_TOO_LONG' }
-  if (bio && bio.length > 50) return { ok: false, error: 'BIO_TOO_LONG' }
+  // Only validate text fields (avatarUrl is handled separately)
+  if (name !== undefined && name.length > 60) return { ok: false, error: 'NAME_TOO_LONG' }
+  if (username !== undefined && username.length > 25) return { ok: false, error: 'USERNAME_TOO_LONG' }
+  if (email !== undefined && email.length > 50) return { ok: false, error: 'EMAIL_TOO_LONG' }
+  if (bio !== undefined && bio.length > 50) return { ok: false, error: 'BIO_TOO_LONG' }
 
   const current = await read()
   const merged = { ...current, ...patch, updatedAt: new Date().toISOString() }

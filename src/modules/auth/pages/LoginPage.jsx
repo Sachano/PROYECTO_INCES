@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { sanitizeIdentifierInput, isLikelyCedula, validateCedulaFormat, validateEmailFormat } from '../../../shared/utils.js'
+import { getApiErrorMessage } from '../../../services/api.js'
 
 export default function LoginPage(){
   const { login } = useAuth()
@@ -65,8 +66,7 @@ export default function LoginPage(){
       navigate(from, { replace: true })
     }catch(err){
       console.error('Login error', err)
-      const msg = err?.body?.message || err?.body?.error || err?.message || 'Credenciales inválidas'
-      setError(msg)
+      setError(getApiErrorMessage(err, 'Error al iniciar sesión. Intenta de nuevo.'))
     }finally{
       setBusy(false)
     }

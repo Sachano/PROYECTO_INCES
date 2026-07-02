@@ -25,10 +25,16 @@ export const API_ERRORS = {
   UNKNOWN_ERROR: 'Ocurrió un error inesperado. Por favor intenta de nuevo',
   NOT_FOUND: 'Recurso no encontrado',
   FORBIDDEN: 'Acceso denegado',
+  TIMEOUT: 'El servidor tardó demasiado en responder. Intenta de nuevo.',
 }
 
 function getApiErrorMessage(error, defaultMsg = API_ERRORS.UNKNOWN_ERROR) {
   if (!error) return defaultMsg
+
+  // Check for timeout/abort errors
+  if (error.name === 'AbortError' || error.code === 'TIMEOUT' || error?.message?.includes('timed out') || error?.message?.includes('aborted')) {
+    return API_ERRORS.TIMEOUT
+  }
 
   const serverError = error?.body?.error
   const serverMsg = error?.body?.message
@@ -41,6 +47,7 @@ function getApiErrorMessage(error, defaultMsg = API_ERRORS.UNKNOWN_ERROR) {
   if (status === 401) return API_ERRORS.UNAUTHORIZED
   if (status === 403) return API_ERRORS.FORBIDDEN
   if (status === 404) return API_ERRORS.NOT_FOUND
+  if (status === 504) return API_ERRORS.TIMEOUT
   if (status === 500) return API_ERRORS.SERVER_ERROR
   if (status === 0) return API_ERRORS.NETWORK_ERROR
 
@@ -87,6 +94,8 @@ function clearCache(){
 // Export clearCache for manual cache invalidation
 export { clearCache, getApiErrorMessage, logApiError }
 
+const REQUEST_TIMEOUT = 20000 // 20 seconds timeout for all API requests
+
 async function http(method, url, data, useCache = false){
   const token = getToken()
   const headers = { 'Content-Type': 'application/json' }
@@ -101,27 +110,44 @@ async function http(method, url, data, useCache = false){
     if(cached) return cached
   }
 
-  const res = await fetch(`${BASE}${url}`, {
-    method,
-    headers,
-    body: data ? JSON.stringify(data) : undefined
-  })
-  const text = await res.text()
-  let body = null
-  try{ body = text ? JSON.parse(text) : null }catch(e){ body = text }
-  if(!res.ok){
-    const err = new Error(`HTTP ${res.status}`)
-    err.status = res.status
-    err.body = body
+  // AbortController for timeout — prevents hanging requests (504 prevention)
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
+
+  try {
+    const res = await fetch(`${BASE}${url}`, {
+      method,
+      headers,
+      body: data ? JSON.stringify(data) : undefined,
+      signal: controller.signal
+    })
+    clearTimeout(timeoutId)
+    const text = await res.text()
+    let body = null
+    try{ body = text ? JSON.parse(text) : null }catch(e){ body = text }
+    if(!res.ok){
+      const err = new Error(`HTTP ${res.status}`)
+      err.status = res.status
+      err.body = body
+      throw err
+    }
+
+    // Cache successful GET responses
+    if(useCache && method === 'GET' && cacheKey){
+      setCache(cacheKey, body)
+    }
+
+    return body
+  } catch (err) {
+    clearTimeout(timeoutId)
+    if (err.name === 'AbortError') {
+      const timeoutErr = new Error('Request timed out')
+      timeoutErr.name = 'AbortError'
+      timeoutErr.code = 'TIMEOUT'
+      throw timeoutErr
+    }
     throw err
   }
-
-  // Cache successful GET responses
-  if(useCache && method === 'GET' && cacheKey){
-    setCache(cacheKey, body)
-  }
-
-  return body
 }
 
 export const api = {
@@ -163,7 +189,20 @@ export const api = {
   },
   profile: {
     get: async () => http('GET', '/profile', null, true),
-    update: async (data) => http('PUT', '/profile', data)
+    update: async (data) => http('PUT', '/profile', data),
+    uploadAvatar: async (file) => {
+      const token = getToken()
+      const fd = new FormData()
+      fd.append('avatar', file)
+
+      const res = await fetch(`${BASE}/profile/upload-avatar`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: fd
+      })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      return await res.json()
+    }
   },
   users: {
     list: async (params = {}) => {

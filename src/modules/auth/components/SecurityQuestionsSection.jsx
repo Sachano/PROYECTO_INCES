@@ -15,7 +15,7 @@ const SECURITY_QUESTIONS = [
 
 export default function SecurityQuestionsSection({ questions, onChange, validationError }) {
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div className="form-section" style={{ marginBottom: '20px' }}>
       <h3 style={{ fontSize: '14px', color: '#1a1a2e', marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
         Preguntas de Seguridad (Mínimo 2) *
       </h3>
@@ -27,7 +27,7 @@ export default function SecurityQuestionsSection({ questions, onChange, validati
       )}
 
       {questions.map((sq, index) => (
-        <div key={index} style={{ marginBottom: '15px' }}>
+        <div key={index} className="security-question-item" style={{ marginBottom: '15px' }}>
           <select
             className="input"
             value={sq.question}

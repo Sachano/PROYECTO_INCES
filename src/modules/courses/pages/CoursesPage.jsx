@@ -35,32 +35,7 @@ export default function Cursos(){
       return String(c.title || '').toLowerCase().includes(query)
     }
 
-    function isComplete(c){
-      const hasImage = !!(c.coverImg || c.img)
-      const hasInstructor = c.instructorUserId != null && String(c.instructorUserId) !== ''
-      const hasSyllabus = !!(c.syllabusUrl && String(c.syllabusUrl).trim())
-      return hasImage && hasInstructor && hasSyllabus
-    }
-
-    // For base users, hide incomplete courses unless they're searching — then show placeholder
-    if(user?.role === 'estudiante'){
-      if(!query){
-        return courses.filter(c => matchesType(c) && isComplete(c))
-      }
-
-      // When searching, include complete matches and placeholders for incomplete matches that match query
-      const out = []
-      for(const c of courses){
-        if(!matchesType(c)) continue
-        const titleMatch = String(c.title || '').toLowerCase().includes(query)
-        if(!titleMatch) continue
-        if(isComplete(c)) out.push(c)
-        else out.push({ id: `ph-${c.id}`, placeholder: true })
-      }
-      return out
-    }
-
-    // Non-base users see all matching courses
+    // All users see all matching courses — no more hiding incomplete ones
     return courses.filter(c => matchesType(c) && matchesQuery(c))
   }, [courses, q, type, user])
 

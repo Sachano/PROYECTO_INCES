@@ -1,19 +1,17 @@
 /* Auth / Login */
-.auth-shell{min-height:100vh;display:grid;place-items:center;padding:60px 18px 18px;background:
+.auth-shell{min-height:100vh;display:grid;place-items:center;padding:60px 18px;background:
   radial-gradient(1200px 600px at 15% 15%, rgba(193,18,31,0.18), transparent 60%),
   radial-gradient(900px 500px at 85% 25%, rgba(17,17,17,0.10), transparent 55%),
   linear-gradient(180deg, #ffffff, var(--bg));
 }
 
-/* Minimal login variant: pastel background and centered card */
 .auth-shell.minimal{
   position:relative;
-  overflow:hidden;
-  /* fallback color while image loads */
+  overflow-x:hidden;
+  overflow-y:auto;
   background-color: rgba(255,246,249,0.6);
 }
 
-/* blurred, expanded background using a pseudo-element so we can "fill" the edges */
 .auth-shell.minimal::before{
   content:"";
   position:absolute;
@@ -21,13 +19,12 @@
   background-image: url('/assets/Inces-fondo-login.jpg');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 130% auto; /* expand more to the sides */
+  background-size: 130% auto;
   filter: blur(18px) brightness(0.95);
   transform: scale(1.02);
   z-index:0;
 }
 
-/* main non-blurred image layer (center, slightly larger) placed above the blur but behind card */
 .auth-shell.minimal::after{
   content:"";
   position:absolute;
@@ -35,52 +32,38 @@
   background-image: url('/assets/Inces-fondo-login.jpg');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 100% auto; /* visible center image, slightly expanded */
+  background-size: 100% auto;
   opacity:0.86;
   z-index:0;
 }
 
-/* make the login card pastel white so fields stand out and add backdrop blur */
 .auth-card.minimal-card{
-  background: rgba(255,255,255,0.97); /* pastel white */
-  backdrop-filter: blur(6px); /* soften the photo seen through */
-  /* shift the card to the left */
-  margin-right: 283px;
-  padding:32px 28px;
-  border-radius:18px;
-  box-shadow: 0 18px 40px rgba(16,24,40,0.12);
-  position:relative; /* keep above pseudo-elements */
-  z-index:2;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-
-/* ensure the card still centers vertically */
-.auth-shell.minimal .auth-card.minimal-card {
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  padding:32px 28px;
+  border-radius:18px;
+  width:min(380px,92%);
+  box-sizing:border-box;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(6px);
+  box-shadow:0 18px 40px rgba(16,24,40,0.12);
+  position:relative;
+  z-index:2;
+  max-height:90vh;
+  overflow-y:auto;
 }
+.auth-card.minimal-card.register-card{justify-content:flex-start}
 
-.auth-card.minimal-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;border-radius:16px;width:min(350px,85%);background:rgba(255,255,255,0.98);box-shadow:0 20px 48px rgba(16,24,40,0.14);backdrop-filter: blur(6px);position:relative;z-index:2;}
-.minimal-card{ /* keep legacy classname compatibility */
-  width:min(350px, 85%);
-}
-.register-card {
-  overflow-y: visible;
-}
-.register-card .login-form {
-  max-height: 70vh;
-  overflow-y: auto;
-}
+.register-card{overflow-y:auto}
+.register-card .login-form{max-height:none;overflow-y:visible}
 .login-brand{font-weight:900;font-size:20px;color:var(--dark);margin-bottom:8px;text-align:center}
 .login-brand img{max-width:180px;height:auto;display:block;margin:0 auto}
 .login-logo{max-width:180px;height:auto}
 .login-form{display:grid;gap:12px;width:100%}
 .login-form h2{margin:0 0 4px 0;font-size:18px;text-align:center}
 .input-group{display:block}
-/* wrapper to allow a small badge inside the input area */
 .input-with-badge{position:relative}
 .id-badge{position:absolute;right:8px;top:-12px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.92);color:var(--dark);font-weight:700;font-size:12px;border:1px solid var(--border);box-shadow:0 6px 18px rgba(0,0,0,0.10);z-index:3}
 .id-badge.badge-email{background:linear-gradient(90deg,#FCE7E7,#F8D7DA);color:#9B1C2E}
@@ -122,14 +105,11 @@ border-bottom:1px solid rgba(16,24,40,0.06)}
 .auth-samples{margin-top:12px;padding:12px;border:1px dashed rgba(16,24,40,0.18);border-radius:14px;background:rgba(16,24,40,0.02);font-size:12px;color:var(--muted)}
 .auth-samples b{color:var(--dark)}
 
-/* Password strength indicator used in reset page */
 .pw-strength{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 .pw-bar{height:10px;width:100%;background:rgba(16,24,40,0.06);border-radius:8px;overflow:hidden}
 .pw-fill{height:100%;width:0%;background:#e74c3c;border-radius:8px;transition:width 260ms cubic-bezier(.2,.9,.2,1), background 180ms}
 .pw-fill::after{content:'';display:block;height:100%;width:10%;opacity:0.22;background:rgba(255,255,255,0.12);transform:translateX(0);transition:transform 360ms linear}
-.pw-fill[style]{ /* nudge sheen when width changes */
-  animation: fillPulse 800ms ease-in-out
-}
+.pw-fill[style]{animation: fillPulse 800ms ease-in-out}
 .pw-input-wrapper{position:relative}
 .pw-info-btn{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(16,24,40,0.06);color:var(--dark);font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:default}
 .pw-info-btn:hover{background:rgba(16,24,40,0.09)}
@@ -143,8 +123,36 @@ border-bottom:1px solid rgba(16,24,40,0.06)}
 }
 .pw-label{font-size:12px;color:var(--muted);font-weight:700}
 
-@media (max-width: 860px){
+@media (max-width:860px){
   .auth-card{grid-template-columns:1fr}
+}
+
+@media (max-width:520px){
+  .auth-shell{padding:32px 12px}
+  .auth-card.minimal-card{padding:20px 16px;width:100%;max-width:380px;justify-content:flex-start}
+  .auth-shell.minimal::before{background-size:200% auto}
+  .auth-shell.minimal::after{background-size:160% auto;opacity:0.5}
+  .login-form{gap:10px}
+  .login-form h2{font-size:16px;margin-bottom:2px}
+  .input{padding:10px 12px;font-size:14px}
+  .btn.full{padding:10px;font-size:14px}
+  .login-links{flex-direction:column;align-items:center;gap:8px}
+  .login-brand img{max-width:130px}
+  .login-brand{margin-bottom:4px}
+  .form-section{margin-bottom:14px !important}
+  .form-section h3{font-size:13px !important;margin-bottom:6px !important;padding-bottom:3px !important}
+  .security-question-item{margin-bottom:10px !important}
+}
+
+@media (max-width:400px){
+  .auth-shell{padding:24px 8px}
+  .auth-card.minimal-card{padding:16px 12px}
+  .login-form{gap:8px}
+  .input{padding:9px 10px;font-size:13px}
+  .btn.full{padding:9px;font-size:13px}
+  .form-section{margin-bottom:10px !important}
+  .form-section h3{font-size:12px !important;margin-bottom:4px !important}
+  .security-question-item{margin-bottom:8px !important}
 }
 
 /* Back button for Forgot Password page */

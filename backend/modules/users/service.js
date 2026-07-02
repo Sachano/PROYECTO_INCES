@@ -2,6 +2,7 @@ import { readJson, writeJson } from '../../shared/jsonDb.js'
 import { normalizeIdentifier, onlyDigits } from '../../../src/shared/utils.js'
 import { normalizeCedula, generateSecurePassword, generateEnrollment } from '../../shared/utils.js'
 import bcrypt from 'bcryptjs'
+import { invalidateActiveUserCache } from '../../shared/auth.js'
 
 const FILE = 'users.json'
 
@@ -136,6 +137,7 @@ export async function createUser(userData){
 
   users.push(newUser)
   await writeJson(FILE, users)
+  invalidateActiveUserCache(newUser.id)
 
   // Solo enviar email de bienvenida si fue creado por admin (tiene contraseña temporal)
   if (!useProvidedPassword) {
@@ -211,9 +213,11 @@ export async function deleteUserById(id){
   if(idx === -1) return false
 
   const now = new Date().toISOString()
+  const deletedId = users[idx].id
   users[idx].status = 'disabled'
   users[idx].updatedAt = now
   await writeJson(FILE, users)
+  invalidateActiveUserCache(deletedId)
   return true
 }
 
@@ -229,6 +233,7 @@ export async function setUserStatusById(id, status){
   users[idx].status = st
   users[idx].updatedAt = now
   await writeJson(FILE, users)
+  invalidateActiveUserCache(users[idx].id)
 
   return { ok: true, user: safeUser(users[idx]) }
 }
@@ -270,6 +275,7 @@ export async function updateUser(user){
   if(idx !== -1){
     users[idx] = user
     await writeJson(FILE, users)
+    invalidateActiveUserCache(user.id)
     return user
   }
 

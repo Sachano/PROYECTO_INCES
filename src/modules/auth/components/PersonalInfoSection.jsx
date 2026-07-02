@@ -5,7 +5,7 @@ export default function PersonalInfoSection({ formData, onChange, errors }) {
   const { firstName, lastName, cedulaType, cedula, email, phone, emergencyPhone, charLimitErrors, duplicateErrors } = formData
 
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div className="form-section" style={{ marginBottom: '20px' }}>
       <h3 style={{ fontSize: '14px', color: '#1a1a2e', marginBottom: '10px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
         Información Personal
       </h3>
