@@ -1,4 +1,4 @@
-import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc, checkDuplicate as checkDuplicateSvc, verifyEmail as verifyEmailSvc, resendVerification as resendVerificationSvc } from './service.js'
+import { me as meSvc, login as loginSvc, forgotPassword as forgotSvc, resetPassword as resetSvc, register as registerSvc, checkDuplicate as checkDuplicateSvc, verifyEmail as verifyEmailSvc, resendVerification as resendVerificationSvc, completeInvitation as completeInvitationSvc } from './service.js'
 
 export async function login(req, res){
   const { identifier, password } = req.body || {}
@@ -48,7 +48,8 @@ export async function register(req, res){
     emergencyPhone, 
     location, 
     area,
-    securityQuestions 
+    securityQuestions,
+    password
   } = req.body || {}
   
   const result = await registerSvc({ 
@@ -61,7 +62,8 @@ export async function register(req, res){
     emergencyPhone, 
     location, 
     area,
-    securityQuestions 
+    securityQuestions,
+    password
   })
   
   if(!result.ok){
@@ -84,6 +86,15 @@ export async function checkDuplicate(req, res){
   
   const result = await checkDuplicateSvc({ field, value })
   return res.json({ exists: result.exists })
+}
+
+export async function completeInvitation(req, res){
+  const { token, password } = req.body || {}
+  const result = await completeInvitationSvc({ token, password })
+  if(!result.ok){
+    return res.status(400).json({ error: result.error, message: result.message || null })
+  }
+  return res.json({ ok: true })
 }
 
 export async function verifyEmail(req, res){

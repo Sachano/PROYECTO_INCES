@@ -2,7 +2,10 @@ import { readJson, writeJson } from '../../shared/jsonDb.js'
 import { normalizeIdentifier, onlyDigits } from '../../../src/shared/utils.js'
 import { normalizeCedula, generateSecurePassword, generateEnrollment } from '../../shared/utils.js'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import { invalidateActiveUserCache } from '../../shared/auth.js'
+import { sendEmail } from '../auth/mailer.js'
+import { buildInvitationEmail } from '../auth/emailTemplate.js'
 
 const FILE = 'users.json'
 
@@ -199,6 +202,88 @@ export async function createUser(userData){
     user: safeUser(newUser),
     tempPassword: useProvidedPassword ? null : finalPassword
   }
+}
+
+export async function inviteUser(userData){
+  const users = await readJson(FILE)
+  const {
+    firstName, lastName, cedula, cedulaType = 'V', email, phone,
+    emergencyPhone = '', location = '', area = '',
+  } = userData
+
+  if (!firstName || firstName.length > 50) return { ok: false, error: 'INVALID_FIRST_NAME' }
+  if (!lastName || lastName.length > 50) return { ok: false, error: 'INVALID_LAST_NAME' }
+  if (!cedula || cedula.length < 6 || cedula.length > 10) return { ok: false, error: 'INVALID_CEDULA' }
+  if (!email || email.length > 50 || !email.includes('@')) return { ok: false, error: 'INVALID_EMAIL' }
+  if (!phone || phone.length > 15) return { ok: false, error: 'INVALID_PHONE' }
+
+  const cedulaNorm = normalizeCedula(cedulaType + cedula)
+  const emailNorm = String(email).trim().toLowerCase()
+  const phoneNorm = String(phone).trim()
+
+  const existing = users.find(u => {
+    const uCedula = normalizeCedula((u.cedulaType || '') + u.cedula)
+    return (
+      u.email?.toLowerCase() === emailNorm ||
+      uCedula === cedulaNorm ||
+      String(u.phone || '').trim() === phoneNorm
+    )
+  })
+  if (existing) return { ok: false, error: 'DUPLICATE_DATA' }
+
+  const id = Math.max(...users.map(u => u.id), 0) + 1
+  const uuid = `usr_invited_${id}_${Date.now()}`
+  const now = new Date().toISOString()
+  const invitationToken = crypto.randomBytes(24).toString('hex')
+  const enrollment = (location && area) ? generateEnrollment(String(location).toUpperCase().trim(), String(area).toUpperCase().trim()) : ''
+
+  const newUser = {
+    id, uuid,
+    firstName: String(firstName).trim(),
+    lastName: String(lastName).trim(),
+    cedulaType: String(cedulaType).toUpperCase().trim() || 'V',
+    cedula: String(cedula).trim(),
+    email: emailNorm,
+    phone: phoneNorm,
+    emergencyPhone: String(emergencyPhone).trim(),
+    role: 'estudiante',
+    status: 'invited',
+    passwordHash: '',
+    mustChangePassword: true,
+    enrollment,
+    location: String(location).toUpperCase().trim(),
+    area: String(area).toUpperCase().trim(),
+    securityQuestions: [],
+    avatarUrl: '',
+    emailVerified: false,
+    invitationToken,
+    createdAt: now, updatedAt: now,
+    lastLoginAt: null, notifications: []
+  }
+
+  users.push(newUser)
+  await writeJson(FILE, users)
+
+  try {
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+    const completeLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/complete-registration/${invitationToken}`
+    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+
+    const sent = await sendEmail({
+      to: emailNorm,
+      subject: 'Invitación a INCES - Completa tu registro',
+      html: buildInvitationEmail({ logoUrl, completeLink, userName: firstName, enrollment }),
+      text: `Has sido invitado a INCES. Completa tu registro aquí: ${completeLink}`
+    })
+
+    if (!sent.ok) {
+      console.warn('Invitation email sending reported failure:', sent.error)
+    }
+  } catch (err) {
+    console.warn('Could not send invitation email:', err)
+  }
+
+  return { ok: true, email: emailNorm, enrollment }
 }
 
 export async function getUserById(id){

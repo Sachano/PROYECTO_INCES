@@ -1,4 +1,4 @@
-import { createUser as createUserService, deleteUserById, getUserById, listUsers, setUserStatusById } from './service.js'
+import { createUser as createUserService, deleteUserById, getUserById, listUsers, setUserStatusById, inviteUser as inviteUserService } from './service.js'
 
 export async function createUser(req, res){
   const { 
@@ -52,6 +52,21 @@ export async function deleteUser(req, res){
   const ok = await deleteUserById(req.params.id)
   if(!ok) return res.status(404).json({ error: 'NOT_FOUND' })
   res.json({ ok: true })
+}
+
+export async function inviteUser(req, res){
+  const {
+    firstName, lastName, cedula, cedulaType, email, phone,
+    emergencyPhone, location, area
+  } = req.body
+
+  const result = await inviteUserService({
+    firstName, lastName, cedula, cedulaType, email, phone,
+    emergencyPhone, location, area
+  })
+
+  if(!result.ok) return res.status(400).json({ error: result.error })
+  res.status(201).json({ ok: true, email: result.email, enrollment: result.enrollment })
 }
 
 export async function setUserStatus(req, res){

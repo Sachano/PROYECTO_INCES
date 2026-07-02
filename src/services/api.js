@@ -213,7 +213,8 @@ export const api = {
     get: async (id) => http('GET', `/users/${id}`, null, true),
     delete: async (id) => http('DELETE', `/users/${id}`),
     setStatus: async (id, status) => http('PATCH', `/users/${id}/status`, { status }),
-    create: async (data) => http('POST', '/users', data)
+    create: async (data) => http('POST', '/users', data),
+    invite: async (data) => http('POST', '/users/invite', data)
   },
   virtualClassroom: {
     listCourses: async () => http('GET', '/aula-virtual/courses', null, true),

@@ -32,7 +32,7 @@ export default function UsersPage(){
   const [openCourses, setOpenCourses] = useState(false)
   const [openCreate, setOpenCreate] = useState(false)
   const [createForm, setCreateForm] = useState({
-    firstName: '', lastName: '', cedulaType: 'V', cedula: '', email: '', phone: '', role: 'estudiante', location: '', area: ''
+    firstName: '', lastName: '', cedulaType: 'V', cedula: '', email: '', phone: '', location: '', area: ''
   })
   const [createErrors, setCreateErrors] = useState({})
   const [createDuplicateErrors, setCreateDuplicateErrors] = useState({ cedula: '', email: '', phone: '' })
@@ -166,19 +166,17 @@ export default function UsersPage(){
         return
       }
 
-      const created = await api.users.create(createForm)
+      const result = await api.users.invite(createForm)
       setOpenCreate(false)
-      setCreateForm({ firstName: '', lastName: '', cedulaType: 'V', cedula: '', email: '', phone: '', role: 'estudiante' })
+      setCreateForm({ firstName: '', lastName: '', cedulaType: 'V', cedula: '', email: '', phone: '', role: 'estudiante', location: '', area: '' })
       setCreateErrors({})
       setCreateDuplicateErrors({ cedula: '', email: '', phone: '' })
       load()
 
-      if (created.tempPassword) {
-        alert(`Usuario creado.\n\nContraseña temporal: ${created.tempPassword}\n\nRecomienda al usuario cambiarla en el primer inicio de sesión.`)
-      }
+      alert(`Invitación enviada a ${result.email}.\n\nEl usuario recibirá un correo para completar su registro.`)
     } catch (err) {
       logApiError(err, 'UsersPage-create')
-      alert(getApiErrorMessage(err, 'Error creando usuario'))
+      alert(getApiErrorMessage(err, 'Error al enviar la invitación'))
     }
   }
 
@@ -382,7 +380,7 @@ export default function UsersPage(){
           )}
         </Modal>
 
-        <Modal open={openCreate} onClose={() => setOpenCreate(false)} title="Crear Usuario">
+        <Modal open={openCreate} onClose={() => setOpenCreate(false)} title="Invitar Usuario">
           <form onSubmit={handleCreateSubmit}>
             <div style={{ display: 'grid', gap: 12 }}>
               <div>
@@ -444,30 +442,56 @@ export default function UsersPage(){
               {createDuplicateErrors.phone && (
                 <div style={{color:'#e94560',fontSize:12}}>{createDuplicateErrors.phone}</div>
               )}
-              <div style={{ display: 'flex', gap: 8 }}>
-                <select className="input" value={createForm.role} onChange={e => setCreateForm(f => ({ ...f, role: e.target.value }))}>
-                  <option value="estudiante">Estudiante</option>
-                  <option value="docente">Docente</option>
-                  <option value="administrador">Administrador</option>
-                </select>
-
-                <select className="input" value={createForm.location} onChange={e => setCreateForm(f => ({ ...f, location: e.target.value }))}>
-                  <option value="">Sede (opcional)</option>
-                  <option value="CCS">Caracas</option>
+              <div className="input-group">
+                <label className="sr-only">Sede</label>
+                <select className="input" value={createForm.location} onChange={e => setCreateForm(f => ({ ...f, location: e.target.value }))} required>
+                  <option value="">Selecciona la Sede *</option>
                   <option value="SC">San Cristóbal</option>
+                  <option value="CCS">Caracas</option>
                   <option value="MC">Maracaibo</option>
                   <option value="VAL">Valencia</option>
-                </select>
-
-                <select className="input" value={createForm.area} onChange={e => setCreateForm(f => ({ ...f, area: e.target.value }))}>
-                  <option value="">Área (opcional)</option>
-                  <option value="INF">Informática</option>
-                  <option value="PROG">Programación</option>
-                  <option value="ADMIN">Administración</option>
-                  <option value="ELEC">Electricidad</option>
+                  <option value="BARQ">Barquisimeto</option>
+                  <option value="MCBO">Maturín</option>
+                  <option value="CCC">Ciudad Bolívar</option>
+                  <option value="CUM">Cumaná</option>
+                  <option value="PTO">Puerto La Cruz</option>
+                  <option value="GUAY">Guayana</option>
+                  <option value="BARIN">Barinas</option>
+                  <option value="MERIDA">Mérida</option>
+                  <option value="TRUJ">Trujillo</option>
+                  <option value="LARA">Lara</option>
+                  <option value="CARABOBO">Carabobo</option>
+                  <option value="ARAGUA">Aragua</option>
+                  <option value="ANZOATEGUI">Anzoátegui</option>
+                  <option value="SUCRE">Sucre</option>
+                  <option value="MONAGAS">Monagas</option>
+                  <option value="BOLIVAR">Bolívar</option>
                 </select>
               </div>
-              <button className="btn primary full" type="submit">Crear Usuario</button>
+              <div className="input-group">
+                <label className="sr-only">Área / Curso</label>
+                <select className="input" value={createForm.area} onChange={e => setCreateForm(f => ({ ...f, area: e.target.value }))} required>
+                  <option value="">Selecciona el Área/Curso *</option>
+                  <option value="INF">Informática</option>
+                  <option value="TXT">Textil</option>
+                  <option value="ELEC">Electricidad</option>
+                  <option value="CARP">Carpintería</option>
+                  <option value="SOLD">Soldadura</option>
+                  <option value="MECL">Mecánica Ligera (Autos)</option>
+                  <option value="ADMIN">Administración</option>
+                  <option value="CONT">Contabilidad</option>
+                  <option value="MARK">Marketing Digital</option>
+                  <option value="DIS">Diseño</option>
+                  <option value="UX">Experiencia de Usuario (UX)</option>
+                  <option value="PROG">Programación</option>
+                  <option value="PYTHON">Python Básico</option>
+                  <option value="GER">Gestión de Proyectos</option>
+                  <option value="ASIST">Asistente Administrativo</option>
+                  <option value="RELE">Reparación de Electrodomésticos</option>
+                </select>
+              </div>
+              <p style={{ fontSize: '12px', color: 'var(--muted)', margin: 0 }}>El usuario recibirá un correo para completar su registro como <strong>Estudiante</strong>.</p>
+              <button className="btn primary full" type="submit">Enviar Invitación</button>
             </div>
           </form>
         </Modal>

@@ -245,6 +245,29 @@ export async function register({
   }
 }
 
+export async function completeInvitation({ token, password }){
+  if(!token) return { ok: false, error: 'MISSING_TOKEN' }
+  if(!password || String(password).length < 8){
+    return { ok: false, error: 'WEAK_PASSWORD', message: 'La contraseña debe tener al menos 8 caracteres.' }
+  }
+
+  const { readJson, writeJson } = await import('../../shared/jsonDb.js')
+  const users = await readJson('users.json')
+  const idx = users.findIndex(u => u.invitationToken === token)
+  if(idx === -1) return { ok: false, error: 'INVALID_TOKEN' }
+  if(users[idx].status !== 'invited') return { ok: false, error: 'ALREADY_COMPLETED' }
+
+  const hash = await bcrypt.hash(String(password), 10)
+  users[idx].passwordHash = hash
+  users[idx].status = 'active'
+  users[idx].emailVerified = true
+  users[idx].mustChangePassword = false
+  delete users[idx].invitationToken
+
+  await writeJson('users.json', users)
+  return { ok: true }
+}
+
 export async function verifyEmail({ token }){
   if(!token) return { ok: false, error: 'MISSING_TOKEN' }
   const { readJson, writeJson } = await import('../../shared/jsonDb.js')
