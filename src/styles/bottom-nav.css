@@ -9,3 +9,5 @@
 .bn-item.active svg{color:var(--accent)}
 .bn-item svg{font-size:22px;transition:transform .15s ease}
 .bn-item.active svg{transform:scale(1.1)}
+.bn-logout{background:none;border:none;font-family:inherit;font-size:11px;color:var(--muted)}
+.bn-logout:hover{color:var(--accent)}

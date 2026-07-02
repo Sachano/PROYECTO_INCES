@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../modules/auth/context/AuthContext.jsx'
-import { HiHome, HiBookOpen, HiBell, HiUser, HiAcademicCap } from 'react-icons/hi'
+import { HiHome, HiBookOpen, HiBell, HiUser, HiAcademicCap, HiLogout } from 'react-icons/hi'
 
 const ITEMS = [
   { to: '/', label: 'Inicio', icon: HiHome },
@@ -11,7 +11,13 @@ const ITEMS = [
 ]
 
 export default function BottomNav(){
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleLogout(){
+    logout()
+    navigate('/login')
+  }
 
   return (
     <nav className="bottom-nav">
@@ -24,6 +30,10 @@ export default function BottomNav(){
           </NavLink>
         )
       })}
+      <button type="button" className="bn-item bn-logout" onClick={handleLogout}>
+        <HiLogout size={20} />
+        <span>Salir</span>
+      </button>
     </nav>
   )
 }
