@@ -264,24 +264,17 @@ export async function inviteUser(userData){
   users.push(newUser)
   await writeJson(FILE, users)
 
-  try {
-    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
-    const completeLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/complete-registration/${invitationToken}`
-    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+  // Fire-and-forget: don't block response on email sending
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+  const completeLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/complete-registration/${invitationToken}`
+  const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
 
-    const sent = await sendEmail({
-      to: emailNorm,
-      subject: 'Invitación a INCES - Completa tu registro',
-      html: buildInvitationEmail({ logoUrl, completeLink, userName: firstName, enrollment }),
-      text: `Has sido invitado a INCES. Completa tu registro aquí: ${completeLink}`
-    })
-
-    if (!sent.ok) {
-      console.warn('Invitation email sending reported failure:', sent.error)
-    }
-  } catch (err) {
-    console.warn('Could not send invitation email:', err)
-  }
+  sendEmail({
+    to: emailNorm,
+    subject: 'Invitación a INCES - Completa tu registro',
+    html: buildInvitationEmail({ logoUrl, completeLink, userName: firstName, enrollment }),
+    text: `Has sido invitado a INCES. Completa tu registro aquí: ${completeLink}`
+  }).catch(err => console.warn('Could not send invitation email:', err))
 
   return { ok: true, email: emailNorm, enrollment }
 }

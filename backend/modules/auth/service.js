@@ -210,10 +210,10 @@ export async function register({
 
   if (!res.ok) return res
 
-  // Generate email verification token and send email
+  // Generate email verification token and send email (fire-and-forget)
   // Set user as inactive until email is verified
+  const verificationToken = crypto.randomBytes(24).toString('hex')
   try{
-    const verificationToken = crypto.randomBytes(24).toString('hex')
     const { readJson, writeJson } = await import('../../shared/jsonDb.js')
     const users = await readJson('users.json')
     const idx = users.findIndex(u => String(u.id) === String(res.user.id))
@@ -223,20 +223,21 @@ export async function register({
       users[idx].status = 'inactive'
       await writeJson('users.json', users)
     }
-
-    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
-    const verifyLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/verify-email/${verificationToken}`
-    const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
-
-    await sendEmail({
-      to: email,
-      subject: 'Verifica tu correo electrónico',
-      html: buildVerificationEmail({ logoUrl, verifyLink, userName: firstName }),
-      text: `Confirma tu correo: ${verifyLink}`
-    })
   }catch(err){
-    console.warn('Could not send verification email:', err)
+    console.warn('Could not set verification token:', err)
   }
+
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+  const verifyLink = `${FRONTEND_URL.replace(/\/$/, '')}/auth/verify-email/${verificationToken}`
+  const logoUrl = `${FRONTEND_URL.replace(/\/$/, '')}/assets/inces-logo.png`
+
+  // Fire-and-forget: don't block response on email sending
+  sendEmail({
+    to: email,
+    subject: 'Verifica tu correo electrónico',
+    html: buildVerificationEmail({ logoUrl, verifyLink, userName: firstName }),
+    text: `Confirma tu correo: ${verifyLink}`
+  }).catch(err => console.warn('Could not send verification email:', err))
 
   return {
     ok: true,
